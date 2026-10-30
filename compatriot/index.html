@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compatriot · Wired Village</title>
+<meta name="description" content="Guide to the Compatriot hardware badge: Automotive, Embedded and Wireless challenges.">
+<link rel="icon" href="../assets/img/wired-village-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <a href="../index.html" style="display:flex;align-items:center;gap:9px;color:inherit;border-bottom:none;">
+        <img src="../assets/img/wired-village-logo.png" alt="Wired Village">
+      </a>
+    </div>
+    <nav class="navlinks">
+      <a href="index.html" class="active">Compatriot</a>
+      <a href="../sysrupt-v2/index.html">Sysrupt V2</a>
+      <a href="../sysrupt/index.html">Sysrupt V1</a>
+    </nav>
+  </div>
+</header>
+
+<section class="wrap" style="padding: 40px 24px 10px;">
+  <p class="crumbs"><a href="../index.html">Wired Village</a><span class="sep">/</span>Compatriot</p>
+  <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center;">
+    <div>
+      <p class="eyebrow">Hardware training badge</p>
+      <h1>Compatr<span class="iot">IoT</span></h1>
+      <p class="lead">
+        An ESP32-C6 badge with a second STM32 target chip, a real Ethernet-bridged CAN/UDS
+        bus, and exposed peripherals (UART, I2C, SPI, SWD, BLE, WiFi) built to be sniffed,
+        dumped and poked at. Seventeen challenges, three categories, each solved by actually
+        driving the hardware.
+      </p>
+      <p class="note" style="max-width:62ch;">
+        <b>How to use this guide.</b> Each category lists its challenges easiest to
+        hardest. You'll get what a challenge is testing, the tool it needs, and the
+        pins/bus to connect to. Getting the actual flag is still up to you on the badge.
+        This guide just gets you to where you can see the data.
+      </p>
+      <p style="font-size:13px;">New to all this? Start with
+        <a href="#glossary">the glossary</a> below before diving into a category.</p>
+    </div>
+    <img src="../assets/img/board-cutout.webp" alt="Compatriot badge, populated board, top view" style="width:100%;height:auto;">
+  </div>
+</section>
+<style>@media (max-width: 760px){ .wrap div[style*="grid-template-columns"]{ display:block !important; } }</style>
+
+<section class="wrap" style="padding: 20px 24px 10px;">
+  <table class="index-table">
+    <tr data-href="automotive.html">
+      <td class="ix-name"><a href="automotive.html">Automotive</a></td>
+      <td class="ix-desc">
+        <p>Live CAN bus + UDS diagnostics over Ethernet. Inject frames, bypass a speed
+           limiter, and hold a real ISO-TP conversation with an ECU.</p>
+        <div class="meta"><b>5</b> challenges · <b>1150</b> pts · CAN / UDS</div>
+      </td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="embedded.html">
+      <td class="ix-name"><a href="embedded.html">Embedded</a></td>
+      <td class="ix-desc">
+        <p>Serial shells, bus sniffing over UART/I2C/SPI, an optical side-channel, and
+           physical chip-off dumps over SPI/I2C, up to live SWD debugging.</p>
+        <div class="meta"><b>7</b> challenges · <b>825</b> pts · UART / SPI / SWD</div>
+      </td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="wireless.html">
+      <td class="ix-name"><a href="wireless.html">Wireless</a></td>
+      <td class="ix-desc">
+        <p>BLE GATT exploration (PIN gates, notifications, encoded clues), plus WiFi recon
+           and a monitor-mode packet capture.</p>
+        <div class="meta"><b>5</b> challenges · <b>800</b> pts · BLE / WiFi</div>
+      </td>
+      <td class="ix-arrow">→</td>
+    </tr>
+  </table>
+</section>
+
+<section class="wrap" style="padding: 10px 24px 20px;">
+  <h3 style="margin-top:0;">What you'll see on every category page</h3>
+  <div class="legend-grid">
+    <div class="legend-item">
+      <span class="diff-tag easy">Easy</span>
+      <span class="diff-tag med">Medium</span>
+      <span class="diff-tag hard">Hard</span>
+      <p>Difficulty, in the order challenges are listed. Start at the top of each page.</p>
+    </div>
+    <div class="legend-item">
+      <span class="reveal hint" style="display:inline-block;"><span class="reveal-fake-summary">+ Hint</span></span>
+      <p>A short nudge, click to open. Won't give the exact steps away.</p>
+    </div>
+    <div class="legend-item">
+      <span class="reveal guide" style="display:inline-block;"><span class="reveal-fake-summary">+ Full guide</span></span>
+      <p>The exact steps, commands included, click to open when you're stuck or want to
+         check your work.</p>
+    </div>
+    <div class="legend-item">
+      <span class="tag-soon" style="color:var(--accent-text);border-color:var(--accent-dim);">Install the tools</span>
+      <p>Collapsed setup instructions with real terminal commands. Already on the Arsenal
+         Labs kit? You can skip these.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="glossary" style="padding: 10px 24px 60px;">
+  <h3 style="margin-top:0;">Glossary</h3>
+  <p style="font-size:13.5px;">Terms used across all three categories. Each category page
+     also explains its own jargon inline, this is just a quick reference.</p>
+  <dl class="glossary">
+    <dt>Terminal</dt><dd>A text window where you type a command and press Enter to run it. On Linux, search your applications menu for "Terminal". It's the primary tool for almost everything in this guide.</dd>
+    <dt>Bash command</dt><dd>A single line typed into a terminal. Every grey code block in this guide can be copy-pasted straight into one.</dd>
+    <dt>CAN bus</dt><dd>The wiring standard real cars use to let their computers talk to each other. Compatriot exposes a real one over Ethernet.</dd>
+    <dt>UDS</dt><dd>Unified Diagnostic Services, the standard protocol a mechanic's scan tool uses to talk to a car's computer. Compatriot runs a small real implementation of it.</dd>
+    <dt>GPIO</dt><dd>General Purpose Input/Output. A pin on the board that software can read or write, like a doorbell button or light switch controlled by code.</dd>
+    <dt>Logic analyzer</dt><dd>A small USB device that records whether a wire is electrically high or low over time, many times a second. It's how you read a digital signal without the target knowing you're watching.</dd>
+    <dt>Flash / EEPROM</dt><dd>Memory chips that keep their contents without power. A phone's storage and a USB stick are both this kind of memory, just in different packages.</dd>
+    <dt>SWD / JTAG</dt><dd>Debug protocols that let an external probe pause a chip, read its memory, and single-step its code, the same way a programmer debugs software, but for the hardware itself.</dd>
+    <dt>BLE / GATT</dt><dd>Bluetooth Low Energy, and the data structure (GATT) it uses: a device exposes named values called characteristics that a phone app can read, write, or subscribe to.</dd>
+    <dt>Monitor mode</dt><dd>A mode some WiFi adapters support that lets them capture all nearby WiFi traffic, not just traffic addressed to them. Needed for Packet Ghost.</dd>
+  </dl>
+</section>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="foot-left">WIRED VILLAGE · hardware hacking guides</div>
+    <div class="partner">
+      <span>Partner</span>
+      <img src="../assets/img/bi0s-hardware-logo.png" alt="bi0s hardware">
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

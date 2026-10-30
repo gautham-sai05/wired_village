@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Embedded · Compatriot · Wired Village</title>
+<link rel="icon" href="../assets/img/wired-village-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <a href="../index.html" style="display:flex;align-items:center;gap:9px;color:inherit;border-bottom:none;">
+        <img src="../assets/img/wired-village-logo.png" alt="Wired Village">
+      </a>
+    </div>
+    <nav class="navlinks">
+      <a href="index.html">Overview</a>
+      <a href="automotive.html">Automotive</a>
+      <a href="embedded.html" class="active">Embedded</a>
+      <a href="wireless.html">Wireless</a>
+    </nav>
+  </div>
+</header>
+
+<section class="wrap" style="padding: 36px 24px 0;">
+  <p class="crumbs"><a href="../index.html">Wired Village</a><span class="sep">/</span><a href="index.html">Compatriot</a><span class="sep">/</span>Embedded</p>
+  <p class="eyebrow">Category · 8 challenges · 925 pts</p>
+  <h1>Embedded</h1>
+  <p class="lead">
+    Each challenge here only runs while it's the selected lab on the badge. Opening a
+    different one stops the previous lab's signal. Two of them (Shell Breakout, Bus Stop)
+    are solved right inside the serial console. The rest need a logic analyzer on a bus,
+    or physically dumping a chip off the board.
+  </p>
+  <p style="font-size:13px;">New to logic analyzers or chip dumping? Check the
+     <a href="index.html#glossary">glossary</a> first.</p>
+</section>
+
+<section class="wrap" style="padding: 24px 24px 60px;">
+<div class="docs">
+
+  <nav class="toc">
+    <div class="toc-label">On this page</div>
+    <ol>
+      <li><a href="#tools">Tools</a></li>
+      <li><a href="#headers">Headers H1/H2/H3</a></li>
+      <li><a href="#chips">EEPROM &amp; flash</a></li>
+      <li><a href="#c1">1 · Shell Breakout <small>easy</small></a></li>
+      <li><a href="#c2">2 · Baud Hunter <small>easy</small></a></li>
+      <li><a href="#c4">4 · Bus Stop <small>med</small></a></li>
+      <li><a href="#c5">5 · EEPROM Raider <small>med</small></a></li>
+      <li><a href="#c6">6 · Flash Raider <small>med</small></a></li>
+      <li><a href="#c7">7 · Blinkenlights <small>med</small></a></li>
+      <li><a href="#c8">8 · Target Acquired <small>hard</small></a></li>
+    </ol>
+  </nav>
+
+  <div class="content">
+
+    <h2 id="tools">Tools</h2>
+    <p>Four pieces of hardware cover all eight challenges below. None of it needs to be
+       expensive, the cheap clones of each work fine.</p>
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="shot"><img src="../assets/tools/usb-ttl-adapter.jpg" alt="USB-TTL serial adapter"></div>
+        <div class="info"><div class="name">Serial adapter</div><div class="desc">USB-TTL / any USB-serial cable. Drives Shell Breakout, Bus Stop, and flag submission.</div></div>
+      </div>
+      <div class="tool-card">
+        <div class="shot"><img src="../assets/tools/logic-analyzer.jpg" alt="USB logic analyzer"></div>
+        <div class="info"><div class="name">Logic analyzer</div><div class="desc">Saleae-compatible, run with the Logic 2 app. Used for Baud Hunter, Two-Wire Tap, Bus Stop.</div></div>
+      </div>
+      <div class="tool-card">
+        <div class="shot"><img src="../assets/tools/ch341a.jpg" alt="CH341A SPI/I2C programmer with SOIC-8 clip"></div>
+        <div class="info"><div class="name">CH341A programmer</div><div class="desc">With an SOIC-8 test clip. Dumps the external EEPROM and flash chips. Set its voltage jumper to 3.3V first.</div></div>
+      </div>
+      <div class="tool-card">
+        <div class="shot"><img src="../assets/tools/st-link-v2.jpg" alt="ST-Link V2 SWD debug probe"></div>
+        <div class="info"><div class="name">SWD probe</div><div class="desc">ST-Link or J-Link. Debugs the STM32 target over H3 for Target Acquired.</div></div>
+      </div>
+    </div>
+
+    <div class="arsenal-note"><b>Already on the Arsenal Labs kit?</b> All of this is
+      preinstalled there. Skip straight to Header reference below.</div>
+
+    <details class="sec-collapse" id="install">
+      <summary><h2>Install the tools</h2><span class="tally">4 installs + serial setup</span></summary>
+      <div class="sec-body">
+        <p>Install all of this once on a Linux machine, in a terminal.</p>
+        <p><b>Serial terminal:</b> <code>screen</code>, <code>minicom</code> or
+           <code>picocom</code> all work, pick one.</p>
+        <pre>sudo apt install minicom</pre>
+        <p><b>Logic 2</b> (Saleae's logic analyzer app) isn't a package, download the
+           installer directly:</p>
+        <p><a href="https://www.saleae.com/downloads/" target="_blank" rel="noopener">saleae.com/downloads</a>
+           — grab the Linux <code>.AppImage</code>, mark it executable
+           (<code>chmod +x Logic*.AppImage</code>), then run it. Free, no account needed
+           for the app itself.</p>
+        <p>Don't have real Saleae hardware? The cheap 8-channel clones work fine with the
+           free, open-source <b>PulseView</b> instead (<code>sudo apt install pulseview</code>,
+           or <a href="https://sigrok.org/wiki/Downloads" target="_blank" rel="noopener">sigrok.org/wiki/Downloads</a>).
+           The steps below are written for Logic 2; PulseView's menu names differ but the
+           same settings (sample rate, channel assignment, decoder/analyzer type) are all
+           there under different labels.</p>
+        <p><b>flashrom</b> and <b>i2c-tools</b>, for the CH341A:</p>
+        <pre>sudo apt install flashrom i2c-tools</pre>
+        <p><b>OpenOCD</b> and the <b>ARM GDB</b> toolchain, for the STM32 SWD probe:</p>
+        <pre>sudo apt install openocd gdb-multiarch</pre>
+        <p>If <code>arm-none-eabi-gdb</code> specifically isn't on your system after
+           that, install the full cross toolchain instead:</p>
+        <pre>sudo apt install gcc-arm-none-eabi</pre>
+
+        <p><b>Connecting to the badge's serial port.</b> This is the same every time you
+           see "connect at 115200 8N1" below, for Shell Breakout, Bus Stop, and for
+           submitting a flag. Everything here assumes Linux (the Arsenal Labs kit).</p>
+        <ol>
+          <li>Plug the badge into your computer over USB.</li>
+          <li>Find its port name:
+            <pre>ls /dev/ttyACM*</pre>
+            It's usually <code>/dev/ttyACM0</code>.</li>
+          <li>Open it with your serial terminal at 115200 baud, 8 data bits, no parity,
+            1 stop bit (written as "115200 8N1"). Any of these work:
+            <pre>minicom -D /dev/ttyACM0 -b 115200</pre>
+            <pre>screen /dev/ttyACM0 115200</pre>
+            <pre>putty -serial /dev/ttyACM0 -sercfg 115200,8,n,1,N</pre>
+            (PuTTY isn't just a Windows tool, <code>sudo apt install putty</code> gets
+            you the same program and the same command-line flags on Linux.)</li>
+          <li>You should land at a prompt or see the badge printing text. If it's
+            silent, make sure the right lab or screen is open on the badge.</li>
+        </ol>
+      </div>
+    </details>
+
+    <h2 id="headers">Header reference (H1, H2, H3)</h2>
+    <p>Three 4-pin headers sit next to the ESP32 module: <b>H3</b> is the STM32's SWD debug
+       port (Target Acquired), <b>H2</b> is the ESP32's own JTAG/SWD port, and <b>H1</b> is
+       an internal UART bridge between the two chips. None of the bus-sniffing labs below
+       use these three, but it's easy to clip onto the wrong one.</p>
+    <div class="diagram"><img src="../assets/circuit/photo_headers.jpg" alt="Close-up photo of the H1/H2/H3 headers on the physical board" style="border-radius:3px;"></div>
+    <div class="diagram"><img src="../assets/circuit/sch_headers.jpg" alt="Schematic excerpt of H1/H2/H3 net names, from the board's own KiCad source" style="border-radius:3px;"></div>
+    <table class="pin-table">
+      <tr><th>Header</th><th>Pin 1</th><th>Pin 2</th><th>Pin 3</th><th>Pin 4</th></tr>
+      <tr><td>H3 (STM32 SWD)</td><td class="sig">SWDIO</td><td class="sig">SWCLK</td><td class="sig">NRST</td><td class="sig">GND</td></tr>
+      <tr><td>H2 (ESP32 JTAG)</td><td class="sig">3V3</td><td>—</td><td class="sig">TDI</td><td class="sig">TDO</td></tr>
+      <tr><td>H1 (UART bridge)</td><td class="sig">STM32_TX</td><td class="sig">RX_ESP32</td><td class="sig">STM32_RX</td><td class="sig">TX_ESP32</td></tr>
+    </table>
+
+    <h2 id="chips">Chip-dump targets: EEPROM &amp; flash</h2>
+    <p>EEPROM Raider and Flash Raider each target a separate memory chip, each on its own
+       bus.</p>
+    <div class="diagram"><img src="../assets/circuit/sch_eeprom_flash.jpg" alt="Schematic of the I2C EEPROM (U2) and SPI flash (U5) chips" style="border-radius:3px;"></div>
+    <table class="pin-table">
+      <tr><th>Chip</th><th>Bus</th><th>Signals</th></tr>
+      <tr><td class="sig">U2 (M24256E)</td><td>I2C, addr 0x50</td><td>I2C_SCL / I2C_SDA (IO22 / IO21)</td></tr>
+      <tr><td class="sig">U5 (W25Q64)</td><td>SPI</td><td>SPI_CLK / SPI_MOSI / SPI_MISO / FLASH_CS</td></tr>
+    </table>
+
+    <div class="entry" id="c1">
+      <div class="entry-head"><span class="entry-num">01</span><h2 style="margin:0;">Shell Breakout</h2><span class="diff-tag easy">Easy</span></div>
+      <p>The badge exposes a minimal UNIX-like shell over USB serial with a small fake
+         filesystem. A flag file sits in a hidden directory. A plain directory listing
+         won't show it, but that doesn't mean it can't be reached.</p>
+      <h4>Tool</h4>
+      <p>A serial terminal at 115200 8N1 (PuTTY, <code>screen</code>, <code>minicom</code>).</p>
+
+      <details class="reveal conn"><summary>Connection</summary><div class="reveal-body">
+        <p>No extra wiring. Just the badge's own USB cable, plugged into your computer.
+           See <a href="#tools">Connecting to the badge's serial port</a> above for the
+           exact commands.</p>
+      </div></details>
+      <details class="reveal hint"><summary>Hint</summary><div class="reveal-body">
+        <p><code>ls</code> is not the whole truth on a UNIX box. A directory can hold
+           something a listing doesn't show you, and <code>cd</code> doesn't care what
+           <code>ls</code> hides.</p>
+      </div></details>
+      <details class="reveal guide"><summary>Full guide</summary><div class="reveal-body">
+        <ol>
+          <li>Connect at 115200 8N1. You land at a shell prompt in the home directory.</li>
+          <li><code>ls</code> shows a notes file and a couple of directories. Nothing
+            obviously useful.</li>
+          <li><code>cat</code> the notes file. It's a red herring about a password, a
+            nudge to keep digging rather than an answer.</li>
+          <li><code>cd</code> into the documents directory and <code>ls</code> again. Only
+            one file shows up.</li>
+          <li>The shell's <code>ls</code> hides dot-entries, but <code>cd</code> doesn't
+            block them. Try <code>cd .secret</code> even though you never saw it listed.
+            It works.</li>
+          <li><code>ls</code> again inside it. The flag file is right there.</li>
+          <li><code>cat</code> it. The flag prints, and the badge marks the lab solved the
+            instant it does.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="entry" id="c2">
+      <div class="entry-head"><span class="entry-num">02</span><h2 style="margin:0;">Baud Hunter (UART)</h2><span class="diff-tag easy">Easy</span></div>
+      <p>A flag streams continuously on a UART TX line, but not at the obvious default
+         rate, so capturing garbage at the standard assumption is expected. The whole
+         puzzle is finding the real baud.</p>
+      <h4>Tool</h4>
+      <p>Logic analyzer + Logic 2. Wire a channel to <code>IO16</code> (header U13, pin
+         4) plus GND.</p>
+      <h4>Approach</h4>
+      <p>Capture at ≥1 MS/s and add a UART analyzer. The default-rate decode will be
+         garbage. Either measure one bit's duration directly off the waveform and compute
+         the rate from it, or just step through the standard rates until one decodes
+         cleanly.</p>
+
+      <details class="reveal conn"><summary>Connection</summary><div class="reveal-body">
+        <p><b>Where:</b> header <b>U13</b> (one of the 1x7 headers near the ESP32
+           module), pin 4. On the schematic this pin is labeled <code>TX_ESP32</code>
+           rather than "IO16" directly, since it's wired straight out to a UART bridge,
+           but it's the same signal:</p>
+        <div class="diagram"><img src="../assets/circuit/sch_io.jpg" alt="Schematic of the U13 breakout header showing TX_ESP32 on pin 4"></div>
+        <table class="pin-table">
+          <tr><th>Badge pin</th><th>U13 pin</th><th>Logic analyzer</th></tr>
+          <tr><td class="sig">IO16</td><td>4 (TX_ESP32)</td><td>Any free channel</td></tr>
+          <tr><td class="sig">GND</td><td>any GND pin</td><td>GND, do not skip this wire</td></tr>
+        </table>
+        <p>That's it, two wires. There's nothing to receive, so no TX channel on the
+           analyzer side is needed.</p>
+      </div></details>
+      <details class="reveal hint"><summary>Hint</summary><div class="reveal-body">
+        <p>9600 was wrong. Measure a bit's width directly off the waveform instead of
+           guessing, or just try the other standard rates in order.</p>
+      </div></details>
+      <details class="reveal guide"><summary>Full guide</summary><div class="reveal-body">
+        <ol>
+          <li>Wire a logic analyzer channel to <code>IO16</code> on header U13 pin 4,
+            and its GND to any GND pin on the badge. Don't skip the ground wire.</li>
+          <li>In Logic 2, open the channel's sample rate dropdown (top toolbar) and set
+            it to at least 1 MS/s, then click <b>Start</b> to capture 2-3 seconds.</li>
+          <li>Click the <b>+</b> next to "Analyzers" in the right-hand panel, pick
+            <b>Async Serial</b>, set its Input Channel to the one you wired, and leave
+            the baud rate on the default 9600 for now.</li>
+          <li>Look at the decode: at 9600 it's garbage, which just confirms something is
+            transmitting and that 9600 is wrong.</li>
+          <li>Zoom into one data bit on the waveform and measure its width directly
+            (click-drag a measurement across the narrowest pulse, Logic 2 shows the time
+            delta). Baud is 1 divided by that time. Expect something in the tens of
+            microseconds.</li>
+          <li>Re-open the analyzer's settings (gear icon) and set the baud rate to
+            <code>57600</code>. If you'd rather not measure, that's the answer: 9600
+            was the wrong guess, the badge actually transmits at <b>57600 baud</b>.</li>
+          <li>The decoded bytes show in the Data Table at the bottom and annotated on
+            the trace itself, spelling out the flag, repeating once per second.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="entry" id="c3" style="opacity:.55;">
+      <div class="entry-head"><span class="entry-num">03</span><h2 style="margin:0;">Two-Wire Tap (I2C)</h2><span class="diff-tag easy">Offline</span></div>
+      <p>Pulled from this event. It's not selectable on the badge and won't count toward
+         the total challenge count or score.</p>
+    </div>
+    <div class="entry" id="c3-old" style="display:none;">
+      <h4>Tool</h4>
+      <p>Logic analyzer + Logic 2. Wire to <code>SDA (IO21)</code> / <code>SCL (IO22)</code>
+         (header U14, pins 5 and 6) plus GND.</p>
+      <h4>Approach</h4>
+      <p>Capture, add an I2C analyzer, and read each transaction's data bytes as ASCII.
+         Ignore a NACK on the address byte, that's expected here.</p>
+
+      <details class="reveal conn"><summary>Connection</summary><div class="reveal-body">
+        <p><b>Where:</b> header <b>U14</b> (one of the 1x7 headers near the ESP32
+           module), pin 5 = SDA, pin 6 = SCL. Straight from the board's own schematic:</p>
+        <div class="diagram"><img src="../assets/circuit/sch_io.jpg" alt="Schematic of the U14 breakout header showing I2C_SDA/I2C_SCL on pins 5/6"></div>
+        <table class="pin-table">
+          <tr><th>Badge pin</th><th>U14 pin</th><th>Logic analyzer</th></tr>
+          <tr><td class="sig">IO21</td><td>5 (I2C_SDA)</td><td>SDA</td></tr>
+          <tr><td class="sig">IO22</td><td>6 (I2C_SCL)</td><td>SCL</td></tr>
+          <tr><td class="sig">GND</td><td>any GND pin</td><td>GND</td></tr>
+        </table>
+        <p>Same bus the EEPROM Raider chip sits on, but here you're tapping the wire with
+           an analyzer, not clipping a programmer onto a chip.</p>
+      </div></details>
+      <details class="reveal hint"><summary>Hint</summary><div class="reveal-body">
+        <p>Two wires, one address that never answers, and a lot of oversharing. The NACK
+           doesn't stop the data from going out.</p>
+      </div></details>
+      <details class="reveal guide"><summary>Full guide</summary><div class="reveal-body">
+        <ol>
+          <li>Wire SDA to <code>IO21</code> (U14 pin 5) and SCL to <code>IO22</code>
+            (U14 pin 6), plus any GND pin.</li>
+          <li>Set the sample rate to ≥1 MS/s and click <b>Start</b>.</li>
+          <li>Click the <b>+</b> next to Analyzers, pick <b>I2C</b>, and set its SDA/SCL
+            inputs to the matching channels.</li>
+          <li>You'll see repeated transactions in the Data Table: a Start, an address
+            byte with a Write flag (possibly NACKed, that's expected, nothing real
+            answers at that address), a run of data bytes, then a Stop.</li>
+          <li>Read the data bytes as ASCII directly from the Data Table (it has an ASCII
+            column), or by hand from the hex. Together they spell the flag.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="entry" id="c4">
+      <div class="entry-head"><span class="entry-num">04</span><h2 style="margin:0;">Bus Stop (SPI)</h2><span class="diff-tag med">Medium</span></div>
+      <p>A two-step one: the SPI bus carries a <i>password</i>, not the flag directly.
+         Sniff the password, then type it back into the lab's own serial console to
+         unlock the flag. It's a small model of a bus leaking a credential rather than
+         the secret itself.</p>
+      <h4>Tool</h4>
+      <p>Logic analyzer + Logic 2, plus a serial terminal for the console step. Wire to
+         <code>SCK (IO2)</code> / <code>MOSI (IO3)</code> / <code>CS (IO15)</code> plus GND.</p>
+      <h4>Approach</h4>
+      <p>Capture at ≥1 MS/s, add an SPI analyzer set to mode 0 / MSB-first / CS active-low,
+         and read the MOSI lane's bytes as ASCII. Open a serial connection to the badge
+         with this lab selected and send the recovered text back.</p>
+      <p class="note">CS lives on IO15, not IO4. IO4 is also wired to the onboard
+        SWD line used to program the STM32 target (see <a href="#chips">Target
+        Acquired</a>), so this lab was moved off it to keep the two from fighting
+        over the same pin.</p>
+
+      <details class="reveal conn"><summary>Connection</summary><div class="reveal-body">
+        <table class="pin-table">
+          <tr><th>Badge pin</th><th>Header</th><th>Logic analyzer</th></tr>
+          <tr><td class="sig">IO2</td><td>U13 pin 6</td><td>SCK</td></tr>
+          <tr><td class="sig">IO3</td><td>U13 pin 5</td><td>MOSI</td></tr>
+          <tr><td class="sig">IO15</td><td>U13 pin 2</td><td>CS</td></tr>
+          <tr><td class="sig">GND</td><td>U13 GND</td><td>GND</td></tr>
+        </table>
+        <p><b>Where:</b> all three land on header <b>U13</b>, same connector as
+           <a href="#headers">IO16 for Baud Hunter</a>. SCK is pin 6 (net
+           <code>MOD1_CS</code>), MOSI is pin 5 (net <code>MOD2_CS</code>), CS is
+           pin 2 (a spare GPIO15, labeled on the schematic as just <code>GPIO15</code>).</p>
+        <p>No MISO wire, there isn't one. This is a transmit-only bus, leave that
+           channel unassigned in your decoder.</p>
+      </div></details>
+      <details class="reveal hint"><summary>Hint</summary><div class="reveal-body">
+        <p>The bus isn't leaking the flag, it's leaking the way in. Mode 0, MSB first,
+           and the password is plain ASCII once decoded.</p>
+      </div></details>
+      <details class="reveal guide"><summary>Full guide</summary><div class="reveal-body">
+        <ol>
+          <li>Wire SCK to <code>IO2</code> (U13 pin 6), MOSI to <code>IO3</code>
+            (U13 pin 5), CS to <code>IO15</code> (U13 pin 2), plus GND. Leave MISO
+            unassigned, this is a transmit-only bus.</li>
+          <li>Set the sample rate to ≥1 MS/s (10x the ~100 kHz bus clock) and click
+            <b>Start</b>, let it run a couple of seconds to catch a few bursts.</li>
+          <li>Click the <b>+</b> next to Analyzers, pick <b>SPI</b>, assign CLK/MOSI/
+            Enable to the matching channels, and set Clock State (CPOL) = 0, Clock Phase
+            (CPHA) = 0, Bits per Transfer = 8, Significant Bit = MSB first, Enable Line =
+            Active Low.</li>
+          <li>The MOSI lane's decode in the Data Table reads as ASCII text: that's the
+            password. If you see garbage instead, double-check the Enable polarity and
+            CPOL/CPHA, a mode mismatch is the usual culprit.</li>
+          <li>Open a serial connection to the badge at 115200 8N1 with this lab selected,
+            and type the recovered password in.</li>
+          <li>The badge replies with the flag directly in the terminal and marks the lab
+            solved.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="entry" id="c5">
+      <div class="entry-head"><span class="entry-num">05</span><h2 style="margin:0;">EEPROM Raider</h2><span class="diff-tag med">Medium</span></div>
+      <p>The flag lives on the external I2C EEPROM (U2), not inside the ESP32's own
+         firmware. A plain single-byte-addressed dump reads the wrong location on this
+         chip, it needs two address bytes.</p>
+      <h4>Tool</h4>
+      <p>CH341A programmer in I2C mode + <code>i2c-tools</code>.</p>
+      <h4>Approach</h4>
+      <p>Power the badge off before clipping on. Confirm the chip answers at its address
+         with <code>i2cdetect</code>, then use a two-byte-address read starting at offset
+         0. This chip is large enough that it needs the full 16-bit address, not the
+         single-byte form most dump commands default to.</p>
+
+      <details class="reveal conn"><summary>Connection</summary><div class="reveal-body">
+        <div class="diagram"><img src="../assets/circuit/sch_eeprom_flash.jpg" alt="Schematic of the I2C EEPROM U2, from the board's own KiCad source"></div>
+        <table class="pin-table">
+          <tr><th>CH341A</th><th>U2 (EEPROM)</th></tr>
+          <tr><td>SDA</td><td class="sig">SDA</td></tr>
+          <tr><td>SCL</td><td class="sig">SCL</td></tr>
+          <tr><td>VCC</td><td class="sig">3.3V</td></tr>
+          <tr><td>GND</td><td class="sig">GND</td></tr>
+        </table>
+        <p><b>Power the badge off first.</b> Switch the CH341A to I2C mode and clip the
+           SOIC-8 test clip onto U2, matching pin 1 carefully, the same precision this
+           takes on Flash Raider.</p>
+      </div></details>
+      <details class="reveal hint"><summary>Hint</summary><div class="reveal-body">
+        <p>This isn't a 24C02. One address byte reads you garbage from the wrong place,
+           this chip needs two.</p>
+      </div></details>
+      <details class="reveal guide"><summary>Full guide</summary><div class="reveal-body">
+        <ol>
+          <li>Power the badge off. Switch the CH341A to I2C mode and clip it onto U2:
+            SDA, SCL, VCC (3.3V), GND.</li>
+          <li>Find which <code>/dev/i2c-N</code> bus it registered as with
+            <code>i2cdetect -l</code>.</li>
+          <li>Confirm the chip answers: <code>i2cdetect -y &lt;bus&gt;</code>. You should
+            see <code>50</code> in the grid.</li>
+          <li>Don't reach for plain <code>i2cdump</code>, it assumes single-byte
+            addressing, which is wrong for a 32 KB part. Use
+            <code>i2ctransfer -y &lt;bus&gt; w2@0x50 0x00 0x00 r128@0x50</code> instead.
+            This writes the two-byte address 0x0000, then reads 128 bytes back from
+            there.</li>
+          <li>The output is the banner in ASCII, flag included.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="entry" id="c6">
+      <div class="entry-head"><span class="entry-num">06</span><h2 style="margin:0;">Flash Raider</h2><span class="diff-tag med">Medium</span></div>
+      <p>Same idea as EEPROM Raider, different chip and bus: the flag lives on the external
+         SPI NOR flash (U5), not in the ESP32's own program memory. The most hands-on
+         challenge on the badge, and the most common real hardware-hacking workflow there
+         is.</p>
+      <h4>Tool</h4>
+      <p>CH341A programmer in SPI mode + <code>flashrom</code>.</p>
+      <h4>Approach</h4>
+      <p>Power the badge off and unplug USB entirely before clipping on. Check the
+         CH341A's voltage jumper is set to 3.3V, not 5V. Confirm the programmer identifies
+         the chip before dumping, then search the dumped image for a readable flag
+         banner.</p>
+
+      <details class="reveal conn"><summary>Connection</summary><div class="reveal-body">
+        <div class="diagram"><img src="../assets/circuit/sch_eeprom_flash.jpg" alt="Schematic of the SPI flash U5, from the board's own KiCad source"></div>
+        <table class="pin-table">
+          <tr><th>CH341A</th><th>U5 (flash)</th></tr>
+          <tr><td>CS</td><td class="sig">CS</td></tr>
+          <tr><td>CLK</td><td class="sig">SCK</td></tr>
+          <tr><td>DI</td><td class="sig">MOSI</td></tr>
+          <tr><td>DO</td><td class="sig">MISO</td></tr>
+          <tr><td>VCC</td><td class="sig">3.3V</td></tr>
+          <tr><td>GND</td><td class="sig">GND</td></tr>
+        </table>
+        <p><b>Power the badge off and unplug USB entirely first.</b> Check the CH341A's
+           voltage jumper is set to 3.3V, not 5V, that's the single most common way to
+           damage this chip. Clip the SOIC-8 test clip onto U5, matching pin 1 carefully.</p>
+      </div></details>
+      <details class="reveal hint"><summary>Hint</summary><div class="reveal-body">
+        <p>The flag was never in the microcontroller. Dump the external chip and search
+           the raw bytes for readable text.</p>
+      </div></details>
+      <details class="reveal guide"><summary>Full guide</summary><div class="reveal-body">
+        <ol>
+          <li>Power the badge off and unplug USB entirely. Never clip onto a chip another
+            master is actively driving.</li>
+          <li>Check the CH341A's voltage jumper is set to 3.3V, not 5V. This is the
+            single most common way to damage the chip.</li>
+          <li>Clip the SOIC-8 test clip onto U5, matching pin 1 carefully. A clip
+            rotated or offset by one pin is the usual cause of a failed read.</li>
+          <li>Confirm the programmer sees the chip: <code>flashrom -p ch341a_spi</code>.
+            It should identify a W25Q64. Don't proceed until this succeeds cleanly.</li>
+          <li>Dump it: <code>flashrom -p ch341a_spi -r dump.bin</code>.</li>
+          <li>Search the image: <code>strings dump.bin | grep wired{</code>. The banner
+            sits at offset 0.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="entry" id="c7">
+      <div class="entry-head"><span class="entry-num">07</span><h2 style="margin:0;">Blinkenlights (LED)</h2><span class="diff-tag med">Medium</span></div>
+      <p>An optical side-channel. The flag is blinked out in Morse on the badge's
+         on-board LED. No wires needed, but decoding it takes patience, which is why it
+         sits here rather than earlier.</p>
+      <h4>Tool</h4>
+      <p>Nothing but a phone camera.</p>
+      <h4>Approach</h4>
+      <p>Film at least one full loop, including the longer gap that marks where the
+         message repeats, then scrub frame-by-frame. The shortest flash is one unit.
+         Everything else (dashes, gaps between symbols and characters) is a whole-number
+         multiple of it.</p>
+
+      <details class="reveal conn"><summary>Connection</summary><div class="reveal-body">
+        <p>Nothing to wire up. The NeoPixel is on-board (IO10), there's no external
+           hardware for this one at all, just point a phone camera at the badge.</p>
+      </div></details>
+
+      <details class="reveal hint"><summary>Hint</summary><div class="reveal-body">
+        <p>Shortest flash equals one unit. Every other flash and gap is a whole-number
+           multiple of that same length.</p>
+      </div></details>
+      <details class="reveal guide"><summary>Full guide</summary><div class="reveal-body">
+        <ol>
+          <li>Film the LED in video mode for 10-15 seconds, long enough to catch one
+            full loop including the long repeat gap.</li>
+          <li>Scrub the video frame by frame to tell short flashes from long ones
+            precisely.</li>
+          <li>Identify the unit length from the shortest flash. Dashes, inter-symbol
+            gaps and inter-character gaps are all whole-number multiples of it.</li>
+          <li>Transcribe what you see into dots and dashes, using gap length to tell
+            where one symbol, one character, and the whole message end.</li>
+          <li>Decode the Morse with any reference. Watch for the less common sequences
+            that spell the flag's punctuation.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="entry" id="c8">
+      <div class="entry-head"><span class="entry-num">08</span><h2 style="margin:0;">Target Acquired (STM32)</h2><span class="diff-tag hard">Hard</span></div>
+      <p>A real firmware-reversing challenge against the badge's second microcontroller:
+         an STM32F103C8T6 wired up purely as a training target, unconnected to the ESP32's
+         own challenge engine. Its firmware holds the flag encrypted, not in the clear, so
+         a plain dump won't hand it over directly.</p>
+      <h4>Tool</h4>
+      <p>ST-Link or J-Link SWD probe + <code>openocd</code> + <code>arm-none-eabi-gdb</code>
+         (or a disassembler like Ghidra). See the <a href="#headers">H3 header table</a>
+         above for wiring.</p>
+      <h4>Approach, two valid paths</h4>
+      <p><b>Static:</b> dump the flash over SWD, disassemble it, find the small decryption
+         loop and recover its key, then apply it to the ciphertext sitting nearby in the
+         dump.<br>
+         <b>Live:</b> attach GDB to the running chip instead, it already decrypted the
+         flag into RAM once at boot, so you can read the plaintext straight out of memory
+         without redoing the math.</p>
+      <p class="note">A probe reporting "cannot identify target" almost always means
+        SWDIO/SWCLK are swapped.</p>
+
+      <details class="reveal conn"><summary>Connection</summary><div class="reveal-body">
+        <p>Full H3 pinout and a real photo of the header are in the
+           <a href="#headers">header reference</a> near the top of this page.</p>
+        <table class="pin-table">
+          <tr><th>H3 pin</th><th>Probe wire</th></tr>
+          <tr><td class="sig">SWDIO</td><td>SWDIO</td></tr>
+          <tr><td class="sig">SWCLK</td><td>SWCLK</td></tr>
+          <tr><td class="sig">NRST</td><td>NRST (if your probe breaks it out)</td></tr>
+          <tr><td class="sig">GND</td><td>GND</td></tr>
+        </table>
+        <p>H3 has no 3V3 pin, the STM32 target is already powered from the main board.
+           Don't wire 3V3 to this header.</p>
+      </div></details>
+      <details class="reveal hint"><summary>Hint</summary><div class="reveal-body">
+        <p>The flag isn't in flash as plaintext, but the chip already decrypted it once
+           into RAM at boot. You can watch it happen, or redo the single instruction that
+           undoes it.</p>
+      </div></details>
+      <details class="reveal guide"><summary>Full guide</summary><div class="reveal-body">
+        <p><b>Static path.</b></p>
+        <ol>
+          <li>Wire the probe to H3 (see Connection above): SWDIO, SWCLK, GND, and NRST
+            if your probe has it.</li>
+          <li>Dump flash over SWD:
+            <code>openocd -f interface/stlink.cfg -f target/stm32f1x.cfg -c "init" -c "reset halt" -c "dump_image dump.bin 0x08000000 0x10000" -c "shutdown"</code></li>
+          <li>Confirm it's encrypted: <code>strings dump.bin | grep wired{</code> finds
+            nothing.</li>
+          <li>Disassemble: <code>arm-none-eabi-objdump -D -b binary -m arm --no-show-raw-insn dump.bin | less</code>
+            (or import into Ghidra as raw ARM Cortex at base 0x08000000).</li>
+          <li>Find the small loop that reads a byte, XORs it with an immediate, and
+            writes it elsewhere. That immediate is the key.</li>
+          <li>XOR the ciphertext sitting next to it in <code>.rodata</code> with that key
+            to get the flag.</li>
+        </ol>
+        <p><b>Live path, faster.</b></p>
+        <ol>
+          <li>Start OpenOCD and leave it running:
+            <code>openocd -f interface/stlink.cfg -f target/stm32f1x.cfg</code></li>
+          <li>In a second terminal, attach GDB:
+            <code>arm-none-eabi-gdb</code>, then <code>target remote localhost:3333</code>.</li>
+          <li>Disassemble the start of flash to find the key and the RAM address the
+            decrypted bytes land in: <code>x/40i 0x08000000</code>.</li>
+          <li>Read that RAM address as a string, e.g. <code>x/29bs 0x20000000</code>
+            (adjust to whatever address your disassembly actually points at). The flag
+            prints already decrypted.</li>
+        </ol>
+      </div></details>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="foot-left">WIRED VILLAGE · hardware hacking guides</div>
+    <div class="partner">
+      <span>Partner</span>
+      <img src="../assets/img/bi0s-hardware-logo.png" alt="bi0s hardware">
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

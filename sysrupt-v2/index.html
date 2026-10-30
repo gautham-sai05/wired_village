@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sysrupt V2 · Wired Village</title>
+<meta name="description" content="SYSRUPT Portable OT Range V2 — ICS/SCADA cybersecurity training on a single ESP32-S3 badge.">
+<link rel="icon" href="../assets/img/wired-village-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <a href="../index.html" style="display:flex;align-items:center;gap:9px;color:inherit;border-bottom:none;">
+        <img src="../assets/img/wired-village-logo.png" alt="Wired Village">
+      </a>
+    </div>
+    <nav class="navlinks">
+      <a href="../compatriot/index.html">Compatriot</a>
+      <a href="index.html" class="active">Sysrupt V2</a>
+      <a href="../sysrupt/index.html">Sysrupt V1</a>
+    </nav>
+  </div>
+</header>
+
+<section class="wrap" style="padding: 36px 24px 0;">
+  <p class="crumbs"><a href="../index.html">Wired Village</a><span class="sep">/</span>Sysrupt V2</p>
+  <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center;">
+    <div>
+      <h1 style="margin-top:0;">SYSRUPT Portable OT Range V2</h1>
+      <p class="lead">
+        Join a Wi-Fi network. Hack a power plant. Learn ICS/SCADA security.
+      </p>
+      <p class="lead">
+        A complete OT/ICS hacking range that runs on a single ESP32-S3 badge.
+      </p>
+      <p>
+        The SYSRUPT Portable OT Range V2 is an industrial-cybersecurity training lab that fits on one
+        ESP32-S3 "Vanguard" badge. Flash the badge, join its Wi-Fi, and it becomes the control network
+        of a small simulated plant, a web HMI, a process historian and several real industrial protocols,
+        with 8 CTF challenges across defensive investigation and offensive exploitation.
+      </p>
+      <p>
+        No cloud, no internet, no extra hardware. Your score and progress show on the badge's 320&times;240
+        LCD and survive a reboot.
+      </p>
+    </div>
+    <img src="../assets/sysrupt-v2/board.jpeg" alt="The Vanguard ESP32-S3 badge" style="width:100%;height:auto;border-radius:4px;">
+  </div>
+</section>
+<style>@media (max-width: 760px){ .wrap div[style*="grid-template-columns"]{ display:block !important; } }</style>
+
+<section class="wrap" style="padding: 32px 24px 0;">
+  <h2>Getting Started</h2>
+  <ol>
+    <li>Flash the badge (see <a href="https://github.com/Alwin111/Sysrupt-Portable-OT-Range-V2/blob/main/INSTALL.md" target="_blank" rel="noopener">INSTALL.md</a>).</li>
+    <li>Join its open Wi-Fi: <code>SYSRUPT-OT-V2-&hellip;</code>. Your laptop gets <code>10.0.1.x</code>; the badge is <code>10.0.1.1</code>.</li>
+    <li>Open the operator HMI and download the toolkit:
+      <pre>firefox http://10.0.1.1/
+curl -O http://10.0.1.1/toolkit.zip
+unzip toolkit.zip && cd sysrupt-toolkit-1.0.0
+./bin/sysrupt status          # read-only probe of the challenge ports</pre>
+    </li>
+  </ol>
+  <p class="note">Be gentle: the ESP32-S3 has no PSRAM and a tiny network stack. One connection at a time,
+    low rate. Aggressive scans make ports read "filtered", not "closed".</p>
+</section>
+
+<section class="wrap" style="padding: 32px 24px 0;">
+  <h2>Challenges</h2>
+  <p>8 challenges &middot; 1800 total points &middot; scoreboard on the badge LCD updates automatically.
+     Numbered defensive-first: 01&ndash;04 Defensive, 05&ndash;08 Offensive.</p>
+  <p class="arsenal-note">Start here: <a href="challenges.html#initial-access">Initial Access &mdash; Hacking into the IT Server</a>,
+     the IT foothold (robots.txt &rarr; /control &rarr; login) before pivoting to the OT challenges below.</p>
+  <table class="index-table">
+    <tr data-href="challenges.html#ch01">
+      <td class="ix-name"><a href="challenges.html#ch01">01 &middot; Historian SQL Injection</a></td>
+      <td class="ix-desc"><div class="meta">Defensive &middot; Hard &middot; <b>250</b> pts</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch02">
+      <td class="ix-name"><a href="challenges.html#ch02">02 &middot; Field Device Recovery</a></td>
+      <td class="ix-desc"><div class="meta">Defensive &middot; Hard &middot; <b>250</b> pts</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch03">
+      <td class="ix-name"><a href="challenges.html#ch03">03 &middot; Trojan Historian</a></td>
+      <td class="ix-desc"><div class="meta">Defensive &middot; Medium &middot; <b>150</b> pts</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch04">
+      <td class="ix-name"><a href="challenges.html#ch04">04 &middot; Device Takeover</a></td>
+      <td class="ix-desc"><div class="meta">Defensive &middot; Easy &middot; <b>100</b> pts</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch05">
+      <td class="ix-name"><a href="challenges.html#ch05">05 &middot; OPC Scout</a></td>
+      <td class="ix-desc"><div class="meta">Offensive &middot; Medium &middot; <b>150</b> pts</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch06">
+      <td class="ix-name"><a href="challenges.html#ch06">06 &middot; Second Blackout</a></td>
+      <td class="ix-desc"><div class="meta">Offensive &middot; Expert &middot; <b>300</b> pts</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch07">
+      <td class="ix-name"><a href="challenges.html#ch07">07 &middot; Stabilise the Reactor</a></td>
+      <td class="ix-desc"><div class="meta">Offensive &middot; Expert &middot; <b>300</b> pts</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch08">
+      <td class="ix-name"><a href="challenges.html#ch08">08 &middot; Maintenance Override</a></td>
+      <td class="ix-desc"><div class="meta">Offensive &middot; Expert &middot; <b>300</b> pts</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+  </table>
+  <p>The guides are spoiler-free, they explain the protocol, the surface and the idea, not the answer.</p>
+</section>
+
+<section class="wrap" style="padding: 32px 24px 0;">
+  <h2>Network Map</h2>
+  <p>The badge is the whole network: a Wi-Fi AP at <code>10.0.1.1</code> that hosts every service.</p>
+  <table class="pin-table">
+    <tr><th>Surface</th><th>Port</th><th>Challenge</th></tr>
+    <tr><td class="sig">Web (HMI / intranet / webmail / historian / toolkit)</td><td>TCP 80</td><td>#01, #03, #04, #07, #08 entry</td></tr>
+    <tr><td class="sig">Modbus/TCP</td><td>TCP 502</td><td>#07, #08</td></tr>
+    <tr><td class="sig">OPC-UA-lite</td><td>TCP 9005</td><td>#05</td></tr>
+    <tr><td class="sig">GOOSE (training)</td><td>UDP 6180</td><td>#06</td></tr>
+    <tr><td class="sig">SNMP</td><td>UDP 161</td><td>#02</td></tr>
+  </table>
+  <p>The historian is served under <code>/hist</code> on TCP 80 (its own login + Filter-by-Source SQLi
+     console), not a separate port; it backs #01.</p>
+</section>
+
+<section class="wrap" style="padding: 32px 24px 0;">
+  <h2>The sysrupt Toolkit</h2>
+  <p>A dependency-free Python 3.9+ CLI, served by the badge, that speaks the challenge protocols:</p>
+  <pre>./bin/sysrupt help            # all command groups
+./bin/sysrupt help modbus     # one protocol's commands
+./bin/sysrupt config set target 10.0.1.1</pre>
+  <table class="pin-table">
+    <tr><th>Group</th><th>For</th></tr>
+    <tr><td class="sig">modbus</td><td>Reactor challenges (#07, #08)</td></tr>
+    <tr><td class="sig">goose</td><td>Second Blackout (#06)</td></tr>
+  </table>
+  <p>Every result is reported on a four-level ladder, request &rarr; ack &rarr; observed state change
+     &rarr; challenge completion, so you can see exactly how far an action got. Full reference:
+     <a href="https://github.com/Alwin111/Sysrupt-Portable-OT-Range-V2/blob/main/Devices/vanguard/tools/sysrupt/COMMANDS.md" target="_blank" rel="noopener">COMMANDS.md</a>.</p>
+</section>
+
+<section class="wrap" style="padding: 32px 24px 0;">
+  <h2>Hardware</h2>
+  <p>The "Vanguard" badge is a custom ESP32-S3 board.</p>
+  <table class="pin-table">
+    <tr><td class="sig">SoC</td><td>ESP32-S3-WROOM-1, 16 MB flash, no PSRAM</td></tr>
+    <tr><td class="sig">Display</td><td>ST7789, 320&times;240 landscape</td></tr>
+    <tr><td class="sig">Input</td><td>5-way joystick + buttons</td></tr>
+    <tr><td class="sig">Programming</td><td>USB-C serial (e.g. /dev/ttyACM0)</td></tr>
+    <tr><td class="sig">Networking</td><td>Wi-Fi AP SYSRUPT-OT-V2-NNN, gateway 10.0.1.1, IPv4 forwarding + NAPT</td></tr>
+  </table>
+  <p class="note">No schematic, PCB or CAD files are published for this board. The LoRa radio, LEDs and
+    buzzer on the board are not driven by the firmware.</p>
+</section>
+
+<section class="wrap" style="padding: 32px 24px 60px;">
+  <h2>Tips</h2>
+  <ul>
+    <li>Industrial protocols live on non-standard ports, scan specifically, don't rely on nmap's top-1000.</li>
+    <li>Not everything is TCP. GOOSE and SNMP are UDP.</li>
+    <li>Read the in-scenario email and intranet, the story tells you where each service is and what it does.</li>
+    <li>Watch the HMI. Your attacks have visible impact on the process mimic and gauges.</li>
+    <li>The badge LCD shows per-challenge objectives and two optional hint tiers (they cost points).</li>
+  </ul>
+  <p style="text-align:center;margin-top:28px;"><b>Flash it. Join the Wi-Fi. Hack the plant.</b></p>
+  <p style="text-align:center;"><a href="https://github.com/Alwin111/Sysrupt-Portable-OT-Range-V2" target="_blank" rel="noopener">github.com/Alwin111/Sysrupt-Portable-OT-Range-V2</a></p>
+</section>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="foot-left">WIRED VILLAGE · hardware hacking guides</div>
+    <div class="partner">
+      <span>Partner</span>
+      <img src="../assets/img/bi0s-hardware-logo.png" alt="bi0s hardware">
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireless · Compatriot · Wired Village</title>
+<link rel="icon" href="../assets/img/wired-village-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <a href="../index.html" style="display:flex;align-items:center;gap:9px;color:inherit;border-bottom:none;">
+        <img src="../assets/img/wired-village-logo.png" alt="Wired Village">
+      </a>
+    </div>
+    <nav class="navlinks">
+      <a href="index.html">Overview</a>
+      <a href="automotive.html">Automotive</a>
+      <a href="embedded.html">Embedded</a>
+      <a href="wireless.html" class="active">Wireless</a>
+    </nav>
+  </div>
+</header>
+
+<section class="wrap" style="padding: 36px 24px 0;">
+  <p class="crumbs"><a href="../index.html">Wired Village</a><span class="sep">/</span><a href="index.html">Compatriot</a><span class="sep">/</span>Wireless</p>
+  <p class="eyebrow">Category · 5 challenges · 800 pts</p>
+  <h1>Wireless</h1>
+  <p class="lead">
+    Each lab brings its radio up only while it's the selected lab (a BLE GATT server, or a
+    WiFi access point), and tears it down the moment you leave. Only one person at a time
+    can work a given wireless challenge. All five are recovered with a client app or a
+    browser, then submitted on the Flag Platform.
+  </p>
+  <p style="font-size:13px;">New to BLE or GATT? Check the
+     <a href="index.html#glossary">glossary</a> first.</p>
+</section>
+
+<section class="wrap" style="padding: 24px 24px 60px;">
+<div class="docs">
+
+  <nav class="toc">
+    <div class="toc-label">On this page</div>
+    <ol>
+      <li><a href="#tools">Tools</a></li>
+      <li><a href="#c1">1 · PIN Crack <small>easy</small></a></li>
+      <li><a href="#c2">2 · Honeypot <small>easy</small></a></li>
+      <li><a href="#c3">3 · Double Decode <small>med</small></a></li>
+      <li><a href="#c4">4 · Subscribe &amp; Conquer <small>med</small></a></li>
+      <li><a href="#c5">5 · Packet Ghost <small>hard</small></a></li>
+    </ol>
+  </nav>
+
+  <div class="content">
+
+    <h2 id="tools">Tools</h2>
+    <ul>
+      <li><b>nRF Connect for Mobile</b> (Nordic Semiconductor, free, iOS/Android), for every BLE challenge. Install it from the App Store or Play Store, open it once, and grant it Bluetooth permission.</li>
+      <li><b>Any phone or laptop that can join an open WiFi network</b>, just a browser, for the honeypot challenge. Nothing to install.</li>
+      <li><b>A monitor-mode-capable USB WiFi adapter + Wireshark + aircrack-ng</b>, only for the last challenge. Most laptop WiFi chips can't do monitor mode, you'll likely need a separate USB adapter. Confirm your adapter's chipset supports it beforehand.</li>
+    </ul>
+    <p>On a Linux machine, in a terminal, install Wireshark and the aircrack-ng suite
+       (<code>airmon-ng</code> lives in aircrack-ng):</p>
+    <pre>sudo apt install wireshark aircrack-ng</pre>
+    <p>During install you may be asked "allow non-root users to capture packets". Say
+       yes, then log out and back in once for the permission to take effect.</p>
+
+    <div class="entry" id="c1">
+      <div class="entry-head"><span class="entry-num">01</span><h2 style="margin:0;">PIN Crack (BLE)</h2><span class="diff-tag easy">Easy</span></div>
+      <p>The simplest possible BLE attack: a short numeric PIN gate on a writable
+         characteristic, with no rate limiting at all.</p>
+      <h4>Tool</h4>
+      <p>nRF Connect for Mobile.</p>
+      <h4>Approach</h4>
+      <p>Scan, connect, and expand the one advertised service. Subscribe to notifications
+         on the characteristic first, so every write's result shows up automatically, then
+         write a 3-digit guess as text. The PIN space is small enough that a short
+         brute-force by hand is reasonable.</p>
+
+      <details class="reveal hint"><summary>Hint</summary><div class="reveal-body">
+        <p>No lockout, no rate limit. The initial value even tells you the PIN is 3
+           digits. Just try them.</p>
+      </div></details>
+      <details class="reveal guide"><summary>Full guide</summary><div class="reveal-body">
+        <ol>
+          <li>Open nRF Connect, scan, and connect to the badge's BLE advertisement.</li>
+          <li>Expand the one service. There's one characteristic that supports both
+            write and notify.</li>
+          <li>Tap the notify icon first, so every write's result shows up automatically
+            below the characteristic.</li>
+          <li>Tap the write icon, switch the value type to text, enter <code>123</code>,
+            and send.</li>
+          <li>Watch the value update. A wrong guess changes it to an error message, a
+            correct one changes it to the flag.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="entry" id="c2">
+      <div class="entry-head"><span class="entry-num">02</span><h2 style="margin:0;">Honeypot (WiFi)</h2><span class="diff-tag easy">Easy</span></div>
+      <p>A small, realistic web-recon chain. One misconfiguration leaks a path, that path
+         leaks a credential, and the credential unlocks a session-gated endpoint. It's
+         exactly how real attackers chain together "boring" mistakes.</p>
+      <h4>Tool</h4>
+      <p>Any browser.</p>
+      <h4>Approach</h4>
+      <p>Join the badge's open access point. Check what the site tells crawlers
+         <i>not</i> to index, that's usually exactly what's worth looking at. Follow
+         where it leads, recover the credential it leaks, and log in. Once authenticated,
+         look for the action that view now exposes.</p>
+
+      <details class="reveal hint"><summary>Hint</summary><div class="reveal-body">
+        <p>robots.txt tells you what they didn't want indexed, which is exactly what you
+           want to look at.</p>
+      </div></details>
+      <details class="reveal guide"><summary>Full guide</summary><div class="reveal-body">
+        <ol>
+          <li>Join the open access point and browse to the badge's landing page.</li>
+          <li>Open <code>/robots.txt</code>. It disallows a couple of paths, which is a
+            map of exactly where to look next.</li>
+          <li>Open the disallowed notes page. It leaks a username and password in plain
+            text.</li>
+          <li>Open the maintenance page and log in with those credentials.</li>
+          <li>The authenticated view exposes a button or action that wasn't there before.
+            Use it. The response carries the flag.</li>
+        </ol>
+        <p>Or do the whole thing from a terminal instead of a browser:</p>
+        <pre>curl http://192.168.4.1/robots.txt
+curl http://192.168.4.1/dev-notes.txt
+curl -i -X POST http://192.168.4.1/login -d 'u=technician&p=&lt;password from the notes page&gt;'
+# copy the session value out of the Set-Cookie header in that response, then:
+curl -X POST http://192.168.4.1/maintenance/diagnostic -H 'Cookie: sid=&lt;paste it here&gt;'</pre>
+      </div></details>
+    </div>
+
+    <div class="entry" id="c3">
+      <div class="entry-head"><span class="entry-num">03</span><h2 style="margin:0;">Double Decode (BLE HexLock)</h2><span class="diff-tag med">Medium</span></div>
+      <p>A two-stage BLE puzzle. One characteristic hands you an encoded clue. Decoding it
+         tells you what to do next, not what to send, which are two different things.</p>
+      <h4>Tool</h4>
+      <p>nRF Connect for Mobile, plus a hex-decode tool (CyberChef works well).</p>
+      <h4>Approach</h4>
+      <p>Read the service's characteristics in UUID order. The lowest is read-only, and
+         that's the clue. It looks like plain ASCII at a glance, but look closer at what
+         those particular characters actually spell once decoded properly. The decoded
+         phrase names an action, not the value to send. Write the short word it implies to
+         the write-only characteristic, then read the third characteristic <b>without
+         disconnecting in between</b>.</p>
+
+      <details class="reveal hint"><summary>Hint</summary><div class="reveal-body">
+        <p>The clue tells you what to do, not what to send. Pair up the hex digits two at
+           a time and convert each pair to an ASCII character.</p>
+      </div></details>
+      <details class="reveal guide"><summary>Full guide</summary><div class="reveal-body">
+        <ol>
+          <li>Connect and expand the service. Three characteristics appear in UUID
+            order: a read-only clue, a write-only unlock, and a read-only flag.</li>
+          <li>Read the clue. Its value is a string of hex digit pairs, written out as
+            ASCII characters.</li>
+          <li>Hex-decode it (CyberChef's "From Hex", or
+            <code>python3 -c "print(bytes.fromhex('...').decode())"</code>). The decoded
+            phrase names an action, something like "write" plus a short word.</li>
+          <li>Write just that short word to the unlock characteristic.</li>
+          <li>Without disconnecting, read the flag characteristic. Its value has
+            changed.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="entry" id="c4">
+      <div class="entry-head"><span class="entry-num">04</span><h2 style="margin:0;">Subscribe &amp; Conquer (BLE NotifyLock)</h2><span class="diff-tag med">Medium</span></div>
+      <p>Tests whether you understand BLE <b>notifications</b>, not just read/write. You
+         have to subscribe to a characteristic <i>and</i> satisfy an authentication write
+         before anything happens. Neither alone is enough, and the order between them
+         doesn't matter.</p>
+      <h4>Tool</h4>
+      <p>nRF Connect for Mobile, plus a base64 decoder.</p>
+      <h4>Approach</h4>
+      <p>Read the clue characteristic, its value is base64, not plain text. Decode it to
+         get the exact string the auth characteristic expects. Enable notifications on
+         the notify-only characteristic, write the decoded string to the auth
+         characteristic, and watch the notify characteristic. Once both conditions are
+         satisfied, it pushes the flag on its own.</p>
+      <p class="note">If nothing arrives, you're likely missing one of the two steps, or
+        there's a stray space in what you typed. The badge stays silent on a wrong auth
+        string by design, there's no error to lean on.</p>
+
+      <details class="reveal hint"><summary>Hint</summary><div class="reveal-body">
+        <p>Two things need to be true at once: you're listening, and you've proven who
+           you are. Base64-decode the clue to find the exact auth string.</p>
+      </div></details>
+      <details class="reveal guide"><summary>Full guide</summary><div class="reveal-body">
+        <ol>
+          <li>Connect and expand the service. Three characteristics: a read-only clue, a
+            write-only auth, and a notify-only event.</li>
+          <li>Read the clue. Its value is base64. Decode it (CyberChef's "From Base64",
+            or <code>python3 -c "import base64; print(base64.b64decode('...').decode())"</code>).</li>
+          <li>Enable notifications on the event characteristic.</li>
+          <li>Write the decoded string to the auth characteristic, exactly as decoded, no
+            stray leading or trailing space.</li>
+          <li>Watch the event characteristic. Once both steps are done, a notification
+            carrying the flag arrives on its own.</li>
+        </ol>
+      </div></details>
+    </div>
+
+    <div class="entry" id="c5">
+      <div class="entry-head"><span class="entry-num">05</span><h2 style="margin:0;">Packet Ghost (WiFi)</h2><span class="diff-tag hard">Hard</span></div>
+      <p>802.11 monitor-mode packet capture. The flag is split across two beacon frames
+         sent well apart in time, so this takes patience and a filter, not just a single
+         capture. It's the only wireless challenge requiring monitor mode.</p>
+      <h4>Tool</h4>
+      <p>A monitor-mode-capable USB WiFi adapter + Wireshark.</p>
+      <h4>Approach</h4>
+      <p>Put your adapter into monitor mode on the badge's broadcast channel, start a
+         capture, and filter down to just this badge's SSID to cut ambient noise. Let it
+         run for well over the badge's full beacon cycle, a short capture will only ever
+         catch one fragment. Expand the vendor-specific information element on two
+         different beacon frames to find both fragments, and join them in the order they
+         occurred.</p>
+
+      <details class="reveal hint"><summary>Hint</summary><div class="reveal-body">
+        <p>One beacon won't have the whole flag. Wait for the second one, it's sent on a
+           longer delay than the first.</p>
+      </div></details>
+      <details class="reveal guide"><summary>Full guide</summary><div class="reveal-body">
+        <ol>
+          <li>Put your adapter into monitor mode on the badge's channel
+            (<code>airmon-ng start &lt;iface&gt; &lt;channel&gt;</code>, or the
+            equivalent <code>iw</code> commands).</li>
+          <li>Start Wireshark on the monitor interface and filter on
+            <code>wlan.ssid == "..."</code> to cut the noise down to just this badge.</li>
+          <li>Let it capture for at least 10-12 seconds, long enough to see a full
+            cycle of both fragments.</li>
+          <li>Click a beacon frame and expand the vendor-specific information element
+            under the 802.11 management tag. The raw bytes there are fragment text.</li>
+          <li>Check a second, later beacon frame the same way. You should find a
+            different fragment there.</li>
+          <li>Join the two fragments in the order they appeared in time.</li>
+        </ol>
+      </div></details>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="foot-left">WIRED VILLAGE · hardware hacking guides</div>
+    <div class="partner">
+      <span>Partner</span>
+      <img src="../assets/img/bi0s-hardware-logo.png" alt="bi0s hardware">
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sysrupt · Wired Village</title>
+<meta name="description" content="Sysrupt Portable OT Range — ICS/SCADA cybersecurity training.">
+<link rel="icon" href="../assets/img/wired-village-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <a href="../index.html" style="display:flex;align-items:center;gap:9px;color:inherit;border-bottom:none;">
+        <img src="../assets/img/wired-village-logo.png" alt="Wired Village">
+      </a>
+    </div>
+    <nav class="navlinks">
+      <a href="../compatriot/index.html">Compatriot</a>
+      <a href="../sysrupt-v2/index.html">Sysrupt V2</a>
+      <a href="index.html" class="active">Sysrupt V1</a>
+    </nav>
+  </div>
+</header>
+
+<section class="wrap" style="padding: 36px 24px 0;">
+  <p class="crumbs"><a href="../index.html">Wired Village</a><span class="sep">/</span>Sysrupt</p>
+  <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center;">
+    <div>
+      <img src="../assets/sysrupt/logo.png" alt="Sysrupt" style="height:48px;width:auto;margin-bottom:16px;">
+      <h1 style="margin-top:0;">Portable OT Range</h1>
+      <p class="lead">
+        A hands-on ICS/SCADA cybersecurity training platform that fits in your backpack.
+      </p>
+      <p class="lead">
+        Plug in an Ethernet cable. Hack a water treatment plant. Learn ICS/SCADA security.
+      </p>
+      <p>
+        The Sysrupt Portable OT Range is a complete industrial cybersecurity training lab
+        running on a single purpose-built <b>Sysrupt</b> appliance. It simulates a real
+        water treatment facility with 5 network zones, 8 industrial protocols, and 10
+        progressive CTF challenges.
+      </p>
+    </div>
+    <img src="../assets/sysrupt/board.png" alt="Sysrupt board" style="width:100%;height:auto;">
+  </div>
+</section>
+<style>@media (max-width: 760px){ .wrap div[style*="grid-template-columns"]{ display:block !important; } }</style>
+
+<section class="wrap" style="padding: 32px 24px 0;">
+  <h2>Getting Started</h2>
+  <ol>
+    <li>Plug your Ethernet cable into the OT Range board</li>
+    <li>Your laptop gets an IP automatically (10.0.1.x)</li>
+    <li>Open a terminal and start scanning:
+      <pre>nmap -sT 10.0.1.0/24</pre>
+    </li>
+    <li>Find the web server. Open it. Hack your way in.</li>
+  </ol>
+</section>
+
+<section class="wrap" style="padding: 32px 24px 0;">
+  <h2>Challenges</h2>
+  <p>10 progressive challenges. 4700 total points. The scoreboard updates automatically.</p>
+  <table class="index-table">
+    <tr data-href="challenges.html#ch01">
+      <td class="ix-name"><a href="challenges.html#ch01">1 · Perimeter Breach</a></td>
+      <td class="ix-desc"><div class="meta"><b>100</b> pts · HTTP</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch02">
+      <td class="ix-name"><a href="challenges.html#ch02">2 · Intelligence Gathering</a></td>
+      <td class="ix-desc"><div class="meta"><b>200</b> pts · OPC-UA</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch03">
+      <td class="ix-name"><a href="challenges.html#ch03">3 · Pivot to OT</a></td>
+      <td class="ix-desc"><div class="meta"><b>300</b> pts · SQLi + SSH</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch04">
+      <td class="ix-name"><a href="challenges.html#ch04">4 · Building Recon</a></td>
+      <td class="ix-desc"><div class="meta"><b>350</b> pts · BACnet/IP</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch05">
+      <td class="ix-name"><a href="challenges.html#ch05">5 · Deep Protocol: DNP3</a></td>
+      <td class="ix-desc"><div class="meta"><b>400</b> pts · DNP3</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch06">
+      <td class="ix-name"><a href="challenges.html#ch06">6 · Silent Overpressure</a></td>
+      <td class="ix-desc"><div class="meta"><b>450</b> pts · EtherNet/IP (CIP)</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch07">
+      <td class="ix-name"><a href="challenges.html#ch07">7 · Power Substation Blackout</a></td>
+      <td class="ix-desc"><div class="meta"><b>500</b> pts · IEC 60870-5-104</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch08">
+      <td class="ix-name"><a href="challenges.html#ch08">8 · Process Manipulation</a></td>
+      <td class="ix-desc"><div class="meta"><b>600</b> pts · Modbus TCP</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch09">
+      <td class="ix-name"><a href="challenges.html#ch09">9 · Safety Assault</a></td>
+      <td class="ix-desc"><div class="meta"><b>800</b> pts · S7comm (Siemens)</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+    <tr data-href="challenges.html#ch10">
+      <td class="ix-name"><a href="challenges.html#ch10">10 · Full Compromise</a></td>
+      <td class="ix-desc"><div class="meta"><b>1000</b> pts · The Stuxnet Scenario</div></td>
+      <td class="ix-arrow">→</td>
+    </tr>
+  </table>
+</section>
+
+<section class="wrap" style="padding: 32px 24px 0;">
+  <h2>Network Map</h2>
+  <div class="diagram" style="background:#05070f;">
+    <img src="../assets/sysrupt/architecture.svg" alt="Architecture" style="width:100%;height:auto;">
+  </div>
+  <p>Five network zones based on the IEC 62443 Purdue Model:</p>
+  <table class="pin-table">
+    <tr><th>Zone</th><th>Subnet</th><th>What's Inside</th></tr>
+    <tr><td class="sig">Corporate</td><td>10.0.1.0/24</td><td>Web portal, building management</td></tr>
+    <tr><td class="sig">DMZ</td><td>10.0.2.0/24</td><td>Historian, OPC-UA gateway, jump host</td></tr>
+    <tr><td class="sig">SCADA</td><td>10.0.3.0/24</td><td>HMI, engineering workstation</td></tr>
+    <tr><td class="sig">Process</td><td>10.0.4.0/24</td><td>PLCs: Modbus, DNP3, EtherNet/IP, IEC 104</td></tr>
+    <tr><td class="sig">Safety</td><td>10.0.5.0/24</td><td>Safety Instrumented System</td></tr>
+  </table>
+</section>
+
+<section class="wrap" style="padding: 32px 24px 0;">
+  <h2>Protocol Tools</h2>
+  <p>Six custom tools are pre-installed on your Kali machine:</p>
+  <pre>python3 ~/tools/bacnet-tool.py  -h    # BACnet/IP (Building Automation)
+python3 ~/tools/dnp3-tool.py    -h    # DNP3 (Power/Water SCADA)
+python3 ~/tools/enip-tool.py    -h    # EtherNet/IP (Rockwell PLCs)
+python3 ~/tools/iec104-tool.py  -h    # IEC 104 (Power Grid)
+python3 ~/tools/modbus-tool.py  -h    # Modbus TCP (Chemical Dosing)
+python3 ~/tools/s7comm-tool.py  -h    # S7comm (Siemens Safety)</pre>
+  <p>Each tool uses the same format:</p>
+  <pre>python3 ~/tools/&lt;tool&gt; -t &lt;target-ip&gt; -c &lt;command&gt;</pre>
+  <p>Common commands: <code>scan</code>, <code>read</code>, <code>write</code></p>
+</section>
+
+<section class="wrap" style="padding: 32px 24px 0;">
+  <h2>Kali Setup</h2>
+  <p>If tools aren't installed yet:</p>
+  <pre>cd kali-setup
+sudo bash kali-setup.sh</pre>
+  <p>This installs: nmap, sshpass, opcua-client, pymodbus, python-snap7, c104, cpppo, and all 6 protocol tools.</p>
+</section>
+
+<section class="wrap" style="padding: 32px 24px 0;">
+  <h2>Protocols You'll Encounter</h2>
+  <table class="pin-table">
+    <tr><th>Protocol</th><th>Port</th><th>Real-World Use</th></tr>
+    <tr><td class="sig">HTTP</td><td>80</td><td>Corporate web systems</td></tr>
+    <tr><td class="sig">OPC-UA</td><td>4840</td><td>Industrial data exchange</td></tr>
+    <tr><td class="sig">BACnet/IP</td><td>47808 (UDP)</td><td>HVAC, lighting, door locks</td></tr>
+    <tr><td class="sig">DNP3</td><td>20000</td><td>Power grids, water utilities</td></tr>
+    <tr><td class="sig">EtherNet/IP</td><td>44818</td><td>Factory automation (Rockwell)</td></tr>
+    <tr><td class="sig">IEC 104</td><td>2404</td><td>European power grid SCADA</td></tr>
+    <tr><td class="sig">Modbus TCP</td><td>502</td><td>PLCs, chemical dosing</td></tr>
+    <tr><td class="sig">S7comm</td><td>102</td><td>Siemens safety controllers</td></tr>
+  </table>
+</section>
+
+<section class="wrap" style="padding: 32px 24px 60px;">
+  <h2>Tips</h2>
+  <ul>
+    <li>Default nmap only scans top 1000 TCP ports. Industrial protocols use non-standard ports. Scan specifically.</li>
+    <li>Not everything is TCP. Some protocols use UDP.</li>
+    <li>SSH tunneling is your friend for reaching isolated networks.</li>
+    <li>Watch the SCADA HMI. Your attacks have visual impact.</li>
+    <li>The scoreboard display shows hints after 15, 30, and 45 minutes.</li>
+  </ul>
+  <p style="text-align:center;margin-top:28px;"><b>Plug in. Hack the plant. Learn ICS security.</b></p>
+  <p style="text-align:center;"><a href="https://github.com/s34s0n/sysrupt-portable-ot-range" target="_blank" rel="noopener">github.com/s34s0n/sysrupt-portable-ot-range</a></p>
+</section>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="foot-left">WIRED VILLAGE · hardware hacking guides</div>
+    <div class="partner">
+      <span>Partner</span>
+      <img src="../assets/img/bi0s-hardware-logo.png" alt="bi0s hardware">
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+</body>
+</html>
