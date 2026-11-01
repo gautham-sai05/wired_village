@@ -53,6 +53,7 @@
       <li><a href="#chips">EEPROM &amp; flash</a></li>
       <li><a href="#c1">1 · Shell Breakout <small>easy</small></a></li>
       <li><a href="#c2">2 · Baud Hunter <small>easy</small></a></li>
+      <li><a href="#c3">3 · Two-Wire Tap <small>med</small></a></li>
       <li><a href="#c4">4 · Bus Stop <small>med</small></a></li>
       <li><a href="#c5">5 · EEPROM Raider <small>med</small></a></li>
       <li><a href="#c6">6 · Flash Raider <small>med</small></a></li>
@@ -64,8 +65,10 @@
   <div class="content">
 
     <h2 id="tools">Tools</h2>
-    <p>Four pieces of hardware cover all eight challenges below. None of it needs to be
-       expensive, the cheap clones of each work fine.</p>
+    <p>Four pieces of hardware cover most of the eight challenges below. None of it needs
+       to be expensive, the cheap clones of each work fine. Two-Wire Tap additionally
+       needs a second microcontroller with I2C slave support (any spare Arduino, ESP32,
+       or STM32 board), see that challenge for why.</p>
     <div class="tools-grid">
       <div class="tool-card">
         <div class="shot"><img src="../assets/tools/usb-ttl-adapter.jpg" alt="USB-TTL serial adapter"></div>
@@ -253,46 +256,52 @@
       </div></details>
     </div>
 
-    <div class="entry" id="c3" style="opacity:.55;">
-      <div class="entry-head"><span class="entry-num">03</span><h2 style="margin:0;">Two-Wire Tap (I2C)</h2><span class="diff-tag easy">Offline</span></div>
-      <p>Pulled from this event. It's not selectable on the badge and won't count toward
-         the total challenge count or score.</p>
-    </div>
-    <div class="entry" id="c3-old" style="display:none;">
+    <div class="entry" id="c3">
+      <div class="entry-head"><span class="entry-num">03</span><h2 style="margin:0;">Two-Wire Tap (I2C)</h2><span class="diff-tag med">Medium</span></div>
+      <p>Not a pure sniffing challenge: the badge tries to write the flag to I2C address
+         <code>0x42</code>, but nothing on the bus answers, so the write gets NAK'd on the
+         address byte and aborts before any data goes out. That's real I2C behavior, not a
+         bug. To see anything at all, you have to supply the missing device.</p>
       <h4>Tool</h4>
-      <p>Logic analyzer + Logic 2. Wire to <code>SDA (IO21)</code> / <code>SCL (IO22)</code>
+      <p>A second microcontroller with I2C slave support (any 3.3&nbsp;V board: Arduino,
+         another ESP32, STM32, whatever you have), plus a logic analyzer + Logic 2 to
+         confirm the capture. Wire to <code>SDA (IO21)</code> / <code>SCL (IO22)</code>
          (header U14, pins 5 and 6) plus GND.</p>
       <h4>Approach</h4>
-      <p>Capture, add an I2C analyzer, and read each transaction's data bytes as ASCII.
-         Ignore a NACK on the address byte, that's expected here.</p>
+      <p>Wire your own board onto the same bus and program it as an I2C slave that ACKs
+         address <code>0x42</code>. Once something answers, the badge's write completes
+         for real and the flag goes out on the wire where you can capture it.</p>
 
       <details class="reveal conn"><summary>Connection</summary><div class="reveal-body">
         <p><b>Where:</b> header <b>U14</b> (one of the 1x7 headers near the ESP32
            module), pin 5 = SDA, pin 6 = SCL. Straight from the board's own schematic:</p>
         <div class="diagram"><img src="../assets/circuit/sch_io.jpg" alt="Schematic of the U14 breakout header showing I2C_SDA/I2C_SCL on pins 5/6"></div>
         <table class="pin-table">
-          <tr><th>Badge pin</th><th>U14 pin</th><th>Logic analyzer</th></tr>
-          <tr><td class="sig">IO21</td><td>5 (I2C_SDA)</td><td>SDA</td></tr>
-          <tr><td class="sig">IO22</td><td>6 (I2C_SCL)</td><td>SCL</td></tr>
-          <tr><td class="sig">GND</td><td>any GND pin</td><td>GND</td></tr>
+          <tr><th>Badge pin</th><th>U14 pin</th><th>Wire to</th></tr>
+          <tr><td class="sig">IO21</td><td>5 (I2C_SDA)</td><td>your board's SDA + logic analyzer</td></tr>
+          <tr><td class="sig">IO22</td><td>6 (I2C_SCL)</td><td>your board's SCL + logic analyzer</td></tr>
+          <tr><td class="sig">GND</td><td>any GND pin</td><td>shared GND, both devices</td></tr>
         </table>
-        <p>Same bus the EEPROM Raider chip sits on, but here you're tapping the wire with
-           an analyzer, not clipping a programmer onto a chip.</p>
+        <p>Same bus the EEPROM Raider chip sits on. Don't drive 5&nbsp;V logic onto these
+           pins, only 3.3&nbsp;V.</p>
       </div></details>
       <details class="reveal hint"><summary>Hint</summary><div class="reveal-body">
-        <p>Two wires, one address that never answers, and a lot of oversharing. The NACK
-           doesn't stop the data from going out.</p>
+        <p>Nothing answers at 0x42 yet. Build the thing that should.</p>
       </div></details>
       <details class="reveal guide"><summary>Full guide</summary><div class="reveal-body">
         <ol>
-          <li>Wire SDA to <code>IO21</code> (U14 pin 5) and SCL to <code>IO22</code>
-            (U14 pin 6), plus any GND pin.</li>
-          <li>Set the sample rate to ≥1 MS/s and click <b>Start</b>.</li>
+          <li>Wire a second microcontroller onto the bus: its SDA to <code>IO21</code>
+            (U14 pin 5), its SCL to <code>IO22</code> (U14 pin 6), and a shared GND.</li>
+          <li>Program it as an I2C slave on address <code>0x42</code> (e.g. Arduino
+            <code>Wire.begin(0x42)</code> with an <code>onReceive()</code> handler). It
+            doesn't need to do anything with the bytes, it just has to exist and ACK.</li>
+          <li>Also clip a logic analyzer onto IO21/IO22 + GND. Set the sample rate to
+            ≥1 MS/s and click <b>Start</b>.</li>
           <li>Click the <b>+</b> next to Analyzers, pick <b>I2C</b>, and set its SDA/SCL
             inputs to the matching channels.</li>
-          <li>You'll see repeated transactions in the Data Table: a Start, an address
-            byte with a Write flag (possibly NACKed, that's expected, nothing real
-            answers at that address), a run of data bytes, then a Stop.</li>
+          <li>With your slave running, the Data Table now shows a Start, an address byte
+            with a Write flag that's <b>ACKed</b> this time, a run of data bytes, then a
+            Stop, repeating about once a second.</li>
           <li>Read the data bytes as ASCII directly from the Data Table (it has an ASCII
             column), or by hand from the hex. Together they spell the flag.</li>
         </ol>
